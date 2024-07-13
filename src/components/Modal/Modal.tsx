@@ -26,7 +26,7 @@ export const Modal = forwardRef<HTMLDialogElement, PropsWithChildren<ModalProps>
           <div className="flex justify-between">
             <h2 className="text-xl font-medium text-neutral-900">{title}</h2>
             <Button variant="icon" onClick={close} autoFocus>
-              <CloseIcon />
+              <CloseIcon className="text-neutral-600" />
               <span className="sr-only">Close</span>
             </Button>
           </div>
