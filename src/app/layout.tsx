@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { notoSans } from '@/lib/fonts'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -13,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={notoSans.className}>{children}</body>
     </html>
   )
 }

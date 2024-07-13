@@ -1,5 +1,5 @@
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
-import { twJoin, twMerge } from 'tailwind-merge'
+import { twMerge } from 'tailwind-merge'
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode
@@ -20,7 +20,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
         className={twMerge(
-          'focus:focus-band flex items-center justify-center gap-1.5 rounded px-4 py-2.5 disabled:bg-neutral-100 disabled:text-neutral-400',
+          'focus:focus-band flex items-center justify-center gap-1.5 rounded px-3 py-2 text-sm disabled:bg-neutral-100 disabled:text-neutral-400 md:px-4 md:py-2.5 md:text-base',
           classes[variant],
         )}
       >
