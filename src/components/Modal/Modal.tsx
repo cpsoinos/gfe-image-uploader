@@ -19,7 +19,7 @@ export const Modal = forwardRef<HTMLDialogElement, PropsWithChildren<ModalProps>
     return (
       <dialog
         ref={mergeRefs(ref, localRef)}
-        className="w-full flex-col gap-8 rounded-lg bg-white px-6 py-8 backdrop:bg-neutral-950 backdrop:opacity-70 open:flex sm:max-w-80 md:max-w-2xl lg:max-w-3xl"
+        className="w-full max-w-xs flex-col gap-8 rounded-lg bg-white px-6 py-8 backdrop:bg-neutral-950 backdrop:opacity-70 open:flex md:max-w-xl"
         {...props}
       >
         <div>
