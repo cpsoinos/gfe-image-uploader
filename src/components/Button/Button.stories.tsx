@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { Button } from './Button'
+import CloseIcon from '@/icons/close.svg'
 
 const meta = {
   title: 'Components/Button',
@@ -23,5 +24,12 @@ export const Primary: Story = {
 export const Secondary: Story = {
   args: {
     variant: 'secondary',
+  },
+}
+
+export const Icon: Story = {
+  args: {
+    variant: 'icon',
+    children: <CloseIcon />,
   },
 }
