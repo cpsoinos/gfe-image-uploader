@@ -16,7 +16,10 @@ export interface ProfileCardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
-  ({ name, avatar = '/avatar.jpg', handle, workplace, pronouns, location, ...props }, ref) => {
+  (
+    { name, avatar = '/avatar-empty.svg', handle, workplace, pronouns, location, ...props },
+    ref,
+  ) => {
     return (
       <div
         ref={ref}
@@ -31,7 +34,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
             width={160}
             height={160}
             alt="avatar"
-            className="size-24 rounded-full border-[3.6px] border-white md:size-40 md:border-6"
+            className="size-24 rounded-full border-[3.6px] border-white bg-white md:size-40 md:border-6"
           />
           {/* TODO: implement update picture button */}
           <Button variant="secondary">Update picture</Button>
