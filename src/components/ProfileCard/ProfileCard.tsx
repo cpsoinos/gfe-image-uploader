@@ -44,9 +44,12 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
         <h1 className="text-2xl font-semibold md:text-3xl">{name}</h1>
 
         {/* details */}
-        <div className="flex flex-col gap-3 text-xl">
+        <div className="flex flex-col flex-wrap gap-3 text-xl md:flex-row">
           <p>{handle}</p>
-          <div className="flex flex-col gap-2">
+          <span className="hidden text-neutral-400 md:inline">•</span>
+
+          {/* job */}
+          <div className="flex flex-col gap-2 md:flex-row">
             {jobTitle}
             <div className="flex gap-3">
               <span className="inline-flex gap-2">
@@ -58,8 +61,10 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
               <span className="text-neutral-600">{pronouns}</span>
             </div>
           </div>
+
+          {/* location */}
           <p className="flex gap-4 text-lg text-neutral-600">
-            <span>{getFlagEmoji('CA')}</span>
+            <span className="text-xl">{getFlagEmoji('CA')}</span>
             <span>
               {location.city}, {location.country}
             </span>
