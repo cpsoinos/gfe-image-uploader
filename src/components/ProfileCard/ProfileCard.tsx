@@ -1,25 +1,22 @@
 import Image from 'next/image'
 import { forwardRef, type HTMLAttributes, type ReactNode } from 'react'
 import { Button } from '../Button/Button'
-import WebflowLogo from '@/icons/webflow-logo.svg'
-import { getFlagEmoji } from '@/lib/getFlagEmoji'
+import { Location } from './Location'
+import { Workplace } from './Workplace'
+import { ProfileDetails } from './ProfileDetails'
+import type { LocationInfo, WorkplaceInfo } from '@/types'
 
 export interface ProfileCardProps extends HTMLAttributes<HTMLDivElement> {
   name: string
+  avatar?: string
   handle: string
-  jobTitle: string
-  companyName: string
-  companyLogo: string
   pronouns: string
-  location: {
-    city: string
-    state?: string
-    country: string
-  }
+  workplace: WorkplaceInfo
+  location: LocationInfo
 }
 
 export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
-  ({ name, handle, jobTitle, companyName, companyLogo, pronouns, location, ...props }, ref) => {
+  ({ name, avatar = '/avatar.jpg', handle, workplace, pronouns, location, ...props }, ref) => {
     return (
       <div
         ref={ref}
@@ -30,8 +27,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
 
         <div className="z-10 flex items-end justify-between">
           <Image
-            // TODO: dynamic src
-            src="/avatar.jpg"
+            src={avatar}
             width={160}
             height={160}
             alt="avatar"
@@ -43,33 +39,13 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
 
         <h1 className="text-2xl font-semibold md:text-3xl">{name}</h1>
 
-        {/* details */}
-        <div className="flex flex-col flex-wrap gap-3 text-xl md:flex-row">
-          <p>{handle}</p>
-          <span className="hidden text-neutral-400 md:inline">•</span>
-
-          {/* job */}
-          <div className="flex flex-col gap-2 md:flex-row">
-            {jobTitle}
-            <div className="flex gap-3">
-              <span className="inline-flex gap-2">
-                <span className="text-neutral-600">at</span>
-                <WebflowLogo className="size-6" />
-                {companyName}
-              </span>
-              <span className="text-neutral-400">•</span>
-              <span className="text-neutral-600">{pronouns}</span>
-            </div>
-          </div>
-
-          {/* location */}
-          <p className="flex gap-4 text-lg text-neutral-600">
-            <span className="text-xl">{getFlagEmoji('CA')}</span>
-            <span>
-              {location.city}, {location.country}
-            </span>
-          </p>
-        </div>
+        <ProfileDetails handle={handle}>
+          <Workplace {...workplace}>
+            <span className="text-neutral-400">•</span>
+            {pronouns}
+          </Workplace>
+          <Location {...location} />
+        </ProfileDetails>
       </div>
     )
   },

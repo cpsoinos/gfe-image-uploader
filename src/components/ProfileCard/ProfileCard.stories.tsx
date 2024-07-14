@@ -8,14 +8,15 @@ const meta = {
   args: {
     name: 'Jack Smith',
     handle: '@kingjack',
-    jobTitle: 'Senior Product Designer',
-    companyName: 'Webflow',
-    companyLogo: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-    pronouns: 'He/Him',
+    workplace: {
+      title: 'Senior Product Designer',
+      companyName: 'Webflow',
+    },
     location: {
       city: 'Vancouver',
-      country: 'Canada',
+      countryCode: 'CA',
     },
+    pronouns: 'He/Him',
   },
 } satisfies Meta<typeof ProfileCard>
 
