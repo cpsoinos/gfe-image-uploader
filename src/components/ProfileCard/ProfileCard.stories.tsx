@@ -7,6 +7,7 @@ const meta = {
   tags: ['autodocs'],
   args: {
     name: 'Jack Smith',
+    avatar: '/avatar.jpg',
     handle: '@kingjack',
     workplace: {
       title: 'Senior Product Designer',
@@ -24,4 +25,10 @@ export default meta
 
 type Story = StoryObj<typeof ProfileCard>
 
-export const Primary: Story = {}
+export const Default: Story = {}
+
+export const EmptyAvatar: Story = {
+  args: {
+    avatar: undefined,
+  },
+}
