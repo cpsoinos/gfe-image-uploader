@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { notoSans } from '@/lib/fonts'
+import { Credits } from '@/components/Credits/Credits'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={notoSans.className}>{children}</body>
+      <Credits />
     </html>
   )
 }
