@@ -1,15 +1,22 @@
-import { useRef, type ChangeEventHandler, type DragEventHandler, type FC } from 'react'
+import { useRef, useState, type ChangeEventHandler, type DragEventHandler, type FC } from 'react'
 import UploadCloud from '@/icons/upload-cloud-2-line.svg'
+import clsx from 'clsx'
 
 interface DropzoneProps {
-  onFilesSelected: (files: File[]) => void
+  onChange: (files: File[]) => void
   accept?: string
   error?: string
   helperText?: string
 }
 
-export const Dropzone: FC<DropzoneProps> = ({ accept, error, helperText, onFilesSelected }) => {
+export const Dropzone: FC<DropzoneProps> = ({
+  accept,
+  error,
+  helperText,
+  onChange: onFilesSelected,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
   const handleClick = () => {
     !error && inputRef.current?.click()
@@ -20,6 +27,24 @@ export const Dropzone: FC<DropzoneProps> = ({ accept, error, helperText, onFiles
     if (fileList) {
       onFilesSelected(Array.from(fileList))
     }
+  }
+
+  const handleDragEnter: DragEventHandler<HTMLDivElement> = (ev) => {
+    ev.preventDefault()
+    ev.stopPropagation()
+    setIsDragging(true)
+  }
+
+  const handleDragOver: DragEventHandler<HTMLDivElement> = (ev) => {
+    ev.preventDefault()
+    ev.stopPropagation()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (ev) => {
+    ev.preventDefault()
+    ev.stopPropagation()
+    setIsDragging(false)
   }
 
   const handleDrop: DragEventHandler<HTMLDivElement> = (ev) => {
@@ -44,18 +69,21 @@ export const Dropzone: FC<DropzoneProps> = ({ accept, error, helperText, onFiles
     onFilesSelected(fileList)
   }
 
-  const handleDragOver: DragEventHandler<HTMLDivElement> = (ev) => {
-    // Prevent default behavior (Prevent file from being opened)
-    ev.preventDefault()
-  }
-
   return (
     <>
       <div
         role="button"
-        className="flex h-48 w-full flex-col items-center justify-center gap-5 rounded border border-neutral-200 bg-neutral-50 py-6"
+        className={clsx(
+          'flex h-48 w-full flex-col items-center justify-center gap-5 rounded border border-neutral-200 py-6',
+          {
+            'bg-neutral-50': !isDragging,
+            'bg-neutral-100': isDragging,
+          },
+        )}
         onClick={handleClick}
+        onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         {error ? (

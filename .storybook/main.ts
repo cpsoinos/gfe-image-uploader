@@ -28,7 +28,26 @@ const config: StorybookConfig = {
     // Configure .svg files to be loaded with @svgr/webpack
     config.module.rules.push({
       test: /\.svg$/,
-      use: ['@svgr/webpack'],
+      use: [
+        {
+          loader: '@svgr/webpack',
+          options: {
+            svgoConfig: {
+              multipass: true,
+              plugins: [
+                {
+                  name: 'preset-default',
+                  params: {
+                    overrides: {
+                      removeViewBox: false,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
     })
 
     return config

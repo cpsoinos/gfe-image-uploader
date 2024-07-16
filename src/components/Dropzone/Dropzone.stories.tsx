@@ -8,7 +8,7 @@ const meta = {
   tags: ['autodocs'],
   args: {
     accept: 'image/png,image/jpeg',
-    onFilesSelected: fn,
+    onChange: fn,
   },
 } satisfies Meta<typeof Dropzone>
 
