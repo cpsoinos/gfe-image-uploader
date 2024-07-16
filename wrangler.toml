@@ -1,3 +1,9 @@
+node_compat = true
+
 [[r2_buckets]]
 binding = "R2_BUCKET"
 bucket_name = "gfe-image-uploader"
+
+[vars]
+CF_ACCOUNT_ID = '62dd6e6f44a50c62d4ad76a0122f5a3c'
+R2_BUCKET_NAME = "gfe-image-uploader"
