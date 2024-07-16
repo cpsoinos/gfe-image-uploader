@@ -15,8 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={notoSans.className}>{children}</body>
-      <Credits />
+      <body className={notoSans.className}>
+        {children}
+        <Credits />
+      </body>
     </html>
   )
 }
