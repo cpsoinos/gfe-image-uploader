@@ -34,7 +34,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
             width={160}
             height={160}
             alt="avatar"
-            className="size-24 rounded-full border-[3.6px] border-white bg-white md:size-40 md:border-6"
+            className="size-24 rounded-full border-[3.6px] border-white bg-white object-cover md:size-40 md:border-6"
           />
           {/* TODO: implement update picture button */}
           <Button variant="secondary">Update picture</Button>
