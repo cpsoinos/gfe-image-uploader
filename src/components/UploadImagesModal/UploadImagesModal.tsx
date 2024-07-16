@@ -3,14 +3,14 @@ import { Modal } from '../Modal/Modal'
 import { Dropzone } from '../Dropzone/Dropzone'
 import mergeRefs from 'merge-refs'
 import { ImageRow } from './ImageRow'
+import { useProfileImages } from '@/contexts/ProfileImagesContext'
 
 const MAX_NUMBER_OF_FILES = 5
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 
 export const UploadImagesModal = forwardRef<HTMLDialogElement>((props, ref) => {
   const modalRef = useRef<HTMLDialogElement>(null)
-  const [files, setFiles] = useState<File[]>([])
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1)
+  const { files, setFiles, selectedIndex, setSelectedIndex } = useProfileImages()
 
   const selectedImage = files[selectedIndex]
 
