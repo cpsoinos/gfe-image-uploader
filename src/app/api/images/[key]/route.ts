@@ -1,6 +1,7 @@
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import type { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
 
@@ -9,8 +10,13 @@ type Params = {
 }
 
 // get a presigned URL to upload to R2
-export async function GET(request: Request, context: { params: Params }) {
+export async function GET(request: NextRequest, context: { params: Params }) {
   const { env } = getRequestContext()
+  const searchParams = request.nextUrl.searchParams
+  const contentType = searchParams.get('contentType')
+  if (!contentType) {
+    return new Response('Missing contentType search param', { status: 400 })
+  }
 
   const R2 = new S3Client({
     region: 'auto',
@@ -23,12 +29,15 @@ export async function GET(request: Request, context: { params: Params }) {
 
   const signedUrl = await getSignedUrl(
     R2,
-    new PutObjectCommand({ Bucket: env.R2_BUCKET_NAME, Key: context.params.key }),
+    new PutObjectCommand({
+      Bucket: env.R2_BUCKET_NAME,
+      Key: context.params.key,
+      ContentType: contentType,
+    }),
     {
       expiresIn: 3600,
     },
   )
 
-  // Caller can now use this URL to upload to that object.
   return new Response(signedUrl, { status: 200 })
 }
