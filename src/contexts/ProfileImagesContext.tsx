@@ -2,24 +2,33 @@ import {
   createContext,
   useContext,
   useMemo,
+  useReducer,
   type Dispatch,
   type FC,
   type ReactNode,
   type Reducer,
-  type SetStateAction,
 } from 'react'
 
 export const MAX_NUMBER_OF_FILES = 5
 export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 
-interface ProfileImagesContextValue {
-  files: File[]
-  setFiles: Dispatch<SetStateAction<File[]>>
-  selectedIndex: number
-  setSelectedIndex: Dispatch<SetStateAction<number>>
+export interface ProfileImagesContextValue {
+  state: ProfileImagesState
+  dispatch: Dispatch<ProfileImagesAction>
 }
 
 export const ProfileImagesContext = createContext<ProfileImagesContextValue | undefined>(undefined)
+
+export const ProfileImagesProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [state, dispatch] = useReducer(profileImagesReducer, {
+    profileImages: [],
+    selectedIndex: -1,
+  })
+
+  const value = useMemo(() => ({ state, dispatch }), [state])
+
+  return <ProfileImagesContext.Provider value={value}>{children}</ProfileImagesContext.Provider>
+}
 
 export const useProfileImages = () => {
   const context = useContext(ProfileImagesContext)
@@ -28,11 +37,6 @@ export const useProfileImages = () => {
   }
   return context
 }
-
-// interface ImageReference {
-//   key: string
-//   url: string
-// }
 
 export interface ProfileImagesState {
   profileImages: ProfileImageState[]
@@ -125,7 +129,6 @@ export interface ProfileImageState {
 }
 
 type ProfileImageAction =
-  // | { type: 'addFile'; payload: File }
   | { type: 'validate' }
   | { type: 'beginUpload' }
   | { type: 'uploadProgress'; payload: number }
@@ -137,8 +140,6 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
   action,
 ) => {
   switch (action.type) {
-    // case 'addFile':
-    //   return { ...state, status: 'pending', file: action.payload }
     case 'validate': {
       if (state.size > MAX_FILE_SIZE_BYTES) {
         return {
@@ -161,6 +162,7 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
     case 'uploadProgress':
       return { ...state, status: 'uploading', progress: action.payload }
     case 'completeUpload':
+      console.log('completeUpload', action.payload)
       return { ...state, status: 'uploaded', progress: 100, src: action.payload }
     case 'error':
       return { ...state, status: 'error', error: action.payload }
@@ -168,13 +170,3 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
       return state
   }
 }
-
-// export const ProfileImagesProvider: FC<{ children: ReactNode }> = ({ children }) => {
-//   const value = useMemo<ProfileImagesContextValue>(() => ({}))
-
-//   return (
-//     <ProfileImagesContext.Provider>
-//       {children}
-//     </ProfileImagesContext.Provider>
-//   )
-// }

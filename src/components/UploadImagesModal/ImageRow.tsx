@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { useEffect, useMemo, useState, type ChangeEventHandler, type FC } from 'react'
+import { useMemo, type ChangeEventHandler, type FC } from 'react'
 import { Radio } from '../Radio/Radio'
 import { formatFileSize } from '@/lib/formatFileSize'
 import { Button } from '../Button/Button'
@@ -31,20 +31,6 @@ export const ImageRow: FC<ImageRowProps> = ({
   onSelect,
   onDelete,
 }) => {
-  // const [error, setError] = useState<string | undefined>(undefined)
-
-  // useEffect(() => {
-  //   if (file.size > MAX_FILE_SIZE_BYTES) {
-  //     setError('This image is larger than 5MB. Please select a smaller image.')
-  //   } else if (!VALID_IMAGE_TYPES.includes(file.type)) {
-  //     setError(
-  //       `The file format of ${file.name} is not supported. Please upload an image in one of the following formats: JPG or PNG.`,
-  //     )
-  //   } else {
-  //     setError(undefined)
-  //   }
-  // }, [file])
-
   const thumbnail = useMemo(() => {
     if (error) {
       return undefined
