@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { UploadImagesModal } from './UploadImagesModal'
 import { useRef } from 'react'
 import { Button } from '../Button/Button'
+import { UploadImagesModal } from './UploadImagesModal'
+import type { Meta, StoryObj } from '@storybook/react'
 
 const meta = {
   title: 'Components/UploadImagesModal',

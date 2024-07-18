@@ -1,6 +1,6 @@
+import clsx from 'clsx'
 import { useRef, useState, type ChangeEventHandler, type DragEventHandler, type FC } from 'react'
 import UploadCloud from '@/icons/upload-cloud-2-line.svg'
-import clsx from 'clsx'
 
 interface DropzoneProps {
   onChange: (files: File[]) => void

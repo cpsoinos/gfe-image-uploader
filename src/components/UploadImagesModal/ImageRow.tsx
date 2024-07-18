@@ -1,14 +1,14 @@
 import Image from 'next/image'
 import { useMemo, type ChangeEventHandler, type FC } from 'react'
-import { Radio } from '../Radio/Radio'
-import { formatFileSize } from '@/lib/formatFileSize'
-import { Button } from '../Button/Button'
+import CloseIcon from '@/icons/close.svg'
 import CropIcon from '@/icons/crop-line.svg'
 import TrashIcon from '@/icons/delete-bin-3-line.svg'
 import FileDamagedIcon from '@/icons/file-damage-line.svg'
-import CloseIcon from '@/icons/close.svg'
-import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
+import { formatFileSize } from '@/lib/formatFileSize'
+import { Button } from '../Button/Button'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
+import { Radio } from '../Radio/Radio'
+import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const VALID_IMAGE_TYPES = ['image/png', 'image/jpeg']

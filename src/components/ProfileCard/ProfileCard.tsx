@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import { forwardRef, useRef, type HTMLAttributes } from 'react'
 import { Button } from '../Button/Button'
-import { Location } from './Location'
-import { Workplace } from './Workplace'
-import { ProfileDetails } from './ProfileDetails'
-import type { LocationInfo, WorkplaceInfo } from '@/types'
 import { UploadImagesModal } from '../UploadImagesModal/UploadImagesModal'
+import { Location } from './Location'
+import { ProfileDetails } from './ProfileDetails'
+import { Workplace } from './Workplace'
+import type { LocationInfo, WorkplaceInfo } from '@/types'
 
 export interface ProfileCardProps extends HTMLAttributes<HTMLDivElement> {
   name: string

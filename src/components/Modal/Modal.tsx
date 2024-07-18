@@ -1,7 +1,7 @@
-import { forwardRef, useRef, type DialogHTMLAttributes, type PropsWithChildren } from 'react'
-import { Button } from '../Button/Button'
 import mergeRefs from 'merge-refs'
+import { forwardRef, useRef, type DialogHTMLAttributes, type PropsWithChildren } from 'react'
 import CloseIcon from '@/icons/close.svg'
+import { Button } from '../Button/Button'
 
 export interface ModalProps extends DialogHTMLAttributes<HTMLDialogElement> {
   title: string

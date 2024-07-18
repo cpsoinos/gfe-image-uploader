@@ -1,7 +1,7 @@
-import type { Metadata } from 'next'
 import './globals.css'
-import { notoSans } from '@/lib/fonts'
 import { Credits } from '@/components/Credits/Credits'
+import { notoSans } from '@/lib/fonts'
+import type { Metadata } from 'next'
 
 export const runtime = 'edge'
 

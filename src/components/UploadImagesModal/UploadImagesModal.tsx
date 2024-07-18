@@ -1,10 +1,10 @@
-import { forwardRef, useCallback, useEffect, useRef } from 'react'
-import { Modal } from '../Modal/Modal'
-import { Dropzone } from '../Dropzone/Dropzone'
 import mergeRefs from 'merge-refs'
-import { ImageRow } from './ImageRow'
+import { forwardRef, useCallback, useEffect, useRef } from 'react'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { getPresignedUploadUrl } from '@/lib/getPresignedUploadUrl'
+import { Dropzone } from '../Dropzone/Dropzone'
+import { Modal } from '../Modal/Modal'
+import { ImageRow } from './ImageRow'
 
 export const UploadImagesModal = forwardRef<HTMLDialogElement>((props, ref) => {
   const modalRef = useRef<HTMLDialogElement>(null)

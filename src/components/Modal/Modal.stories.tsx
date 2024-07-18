@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { Modal } from './Modal'
-import { Button } from '../Button/Button'
 import { useRef } from 'react'
+import { Button } from '../Button/Button'
+import { Modal } from './Modal'
+import type { Meta, StoryObj } from '@storybook/react'
 
 const meta = {
   title: 'Components/Modal',
