@@ -162,7 +162,6 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
     case 'uploadProgress':
       return { ...state, status: 'uploading', progress: action.payload }
     case 'completeUpload':
-      console.log('completeUpload', action.payload)
       return { ...state, status: 'uploaded', progress: 100, src: action.payload }
     case 'error':
       return { ...state, status: 'error', error: action.payload }
