@@ -8,6 +8,7 @@ import TrashIcon from '@/icons/delete-bin-3-line.svg'
 import FileDamagedIcon from '@/icons/file-damage-line.svg'
 import CloseIcon from '@/icons/close.svg'
 import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
+import { ProgressBar } from '../ProgressBar/ProgressBar'
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const VALID_IMAGE_TYPES = ['image/png', 'image/jpeg']
@@ -23,6 +24,8 @@ export const ImageRow: FC<ImageRowProps> = ({
   size,
   file,
   src,
+  status,
+  progress,
   error,
   selected,
   onSelect,
@@ -89,9 +92,12 @@ export const ImageRow: FC<ImageRowProps> = ({
           </div>
           <p className="text-xs text-neutral-600">{formatFileSize(size)}</p>
         </div>
-        {error ? (
-          <p className="text-xs text-red-600">{error}</p>
-        ) : (
+
+        {['pending', 'uploading'].includes(status) && <ProgressBar progress={progress || 0} />}
+
+        {status === 'error' && <p className="text-xs text-red-600">{error}</p>}
+
+        {status === 'uploaded' && (
           <div className="flex items-center gap-2 text-neutral-600">
             {/* TODO: handle cropping */}
             <Button variant="tertiary">
