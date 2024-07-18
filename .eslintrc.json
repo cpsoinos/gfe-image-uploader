@@ -1,13 +1,33 @@
 {
-  "plugins": ["unused-imports", "next-on-pages"],
+  "plugins": ["import", "unused-imports", "next-on-pages"],
   "extends": [
     "next/core-web-vitals",
     "plugin:next-on-pages/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
     "plugin:storybook/recommended",
     "prettier",
     "plugin:oxlint/recommended"
   ],
   "rules": {
-    "unused-imports/no-unused-imports": "error"
+    "unused-imports/no-unused-imports": "error",
+    "import/order": [
+      "warn",
+      {
+        "alphabetize": { "order": "asc" },
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+          "object",
+          "type"
+        ]
+      }
+    ],
+    "import/newline-after-import": "error",
+    "import/no-useless-path-segments": "error"
   }
 }
