@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { forwardRef, useRef, type HTMLAttributes, type ReactNode } from 'react'
+import { forwardRef, useRef, type HTMLAttributes } from 'react'
 import { Button } from '../Button/Button'
 import { Location } from './Location'
 import { Workplace } from './Workplace'
