@@ -1,37 +1,75 @@
-import { forwardRef, useRef, useState, type FC } from 'react'
+import { forwardRef, useCallback, useEffect, useRef } from 'react'
 import { Modal } from '../Modal/Modal'
 import { Dropzone } from '../Dropzone/Dropzone'
 import mergeRefs from 'merge-refs'
 import { ImageRow } from './ImageRow'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
-
-const MAX_NUMBER_OF_FILES = 5
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
+import { getPresignedUploadUrl } from '@/lib/getPresignedUploadUrl'
 
 export const UploadImagesModal = forwardRef<HTMLDialogElement>((props, ref) => {
   const modalRef = useRef<HTMLDialogElement>(null)
-  const { files, setFiles, selectedIndex, setSelectedIndex } = useProfileImages()
+  const { state, dispatch } = useProfileImages()
 
-  const selectedImage = files[selectedIndex]
+  const { profileImages, error, selectedIndex } = state
 
-  const error = files.length >= MAX_NUMBER_OF_FILES ? "You've reached the image limit" : undefined
   const helperText = error ? 'Remove one or more to upload more images.' : 'PNG, or JPG (Max 5MB)'
 
   const onFilesAdded = (files: File[]) => {
-    setFiles((prev) => {
-      const newFiles = [...prev, ...files]
-      if (newFiles.length > 5) newFiles.length = 5
-      return newFiles
-    })
+    files.forEach((file) => dispatch({ type: 'addFile', payload: file }))
   }
 
-  const handleDelete = (index: number) => {
-    setFiles((prev) => {
-      const newFiles = [...prev]
-      newFiles.splice(index, 1)
-      return newFiles
+  const handleDelete = async (index: number) => {
+    const key = profileImages[index].name
+    await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/images/${key}`, {
+      method: 'DELETE',
     })
+    dispatch({ type: 'removeFile', payload: index })
   }
+
+  const onSelected = (index: number) => {
+    dispatch({ type: 'selectImage', payload: index })
+  }
+
+  const uploadFile = useCallback(
+    async (file: File, index: number) => {
+      const presignedUploadUrl = await getPresignedUploadUrl(file)
+      const xhr = new XMLHttpRequest()
+
+      xhr.open('PUT', presignedUploadUrl, true)
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100
+          dispatch({ type: 'uploadProgress', payload: { index, progress } })
+        }
+      }
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          console.log(xhr.responseText)
+          dispatch({ type: 'completeUpload', payload: { index, src: xhr.responseText } })
+        } else {
+          console.error('Error uploading file')
+        }
+      }
+
+      xhr.onerror = () => {
+        console.error('Error uploading file')
+      }
+
+      dispatch({ type: 'beginUpload', payload: { index } })
+      xhr.send(file)
+    },
+    [dispatch],
+  )
+
+  useEffect(() => {
+    profileImages.forEach((image, i) => {
+      if (image.status === 'pending' && image.file) {
+        uploadFile(image.file, i)
+      }
+    })
+  }, [profileImages, uploadFile])
 
   return (
     <Modal
@@ -46,12 +84,12 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement>((props, ref) => {
         helperText={helperText}
       />
       <div className="flex flex-col gap-8">
-        {files.map((file, i) => (
+        {profileImages.map((image, i) => (
           <ImageRow
-            image={file}
-            key={file.name}
+            key={image.name}
+            {...image}
             selected={selectedIndex === i}
-            onSelect={() => setSelectedIndex(i)}
+            onSelect={() => onSelected(i)}
             onDelete={() => handleDelete(i)}
           />
         ))}

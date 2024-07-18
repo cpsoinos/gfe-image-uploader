@@ -51,6 +51,11 @@ const config: StorybookConfig = {
 
     return config
   },
+
+  env: (config) => ({
+    ...config,
+    NEXT_PUBLIC_HOST: 'http://localhost:3000',
+  }),
 }
 
 export default config

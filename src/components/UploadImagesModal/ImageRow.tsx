@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { useEffect, useMemo, useState, type ChangeEventHandler, type FC } from 'react'
+import { useMemo, type ChangeEventHandler, type FC } from 'react'
 import { Radio } from '../Radio/Radio'
 import { formatFileSize } from '@/lib/formatFileSize'
 import { Button } from '../Button/Button'
@@ -7,35 +7,39 @@ import CropIcon from '@/icons/crop-line.svg'
 import TrashIcon from '@/icons/delete-bin-3-line.svg'
 import FileDamagedIcon from '@/icons/file-damage-line.svg'
 import CloseIcon from '@/icons/close.svg'
+import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
+import { ProgressBar } from '../ProgressBar/ProgressBar'
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const VALID_IMAGE_TYPES = ['image/png', 'image/jpeg']
 
-export interface ImageRowProps {
-  image: File
+export interface ImageRowProps extends ProfileImageState {
   selected?: boolean
   onSelect: () => void
   onDelete: () => void
 }
 
-export const ImageRow: FC<ImageRowProps> = ({ image, selected, onSelect, onDelete }) => {
-  const [error, setError] = useState<string | undefined>(undefined)
-
-  useEffect(() => {
-    if (image.size > MAX_FILE_SIZE_BYTES) {
-      setError('This image is larger than 5MB. Please select a smaller image.')
-    } else if (!VALID_IMAGE_TYPES.includes(image.type)) {
-      setError(
-        `The file format of ${image.name} is not supported. Please upload an image in one of the following formats: JPG or PNG.`,
-      )
-    } else {
-      setError(undefined)
-    }
-  }, [image])
-
+export const ImageRow: FC<ImageRowProps> = ({
+  name,
+  size,
+  file,
+  src,
+  status,
+  progress,
+  error,
+  selected,
+  onSelect,
+  onDelete,
+}) => {
   const thumbnail = useMemo(() => {
-    return error ? undefined : URL.createObjectURL(image)
-  }, [image, error])
+    if (error) {
+      return undefined
+    } else if (src) {
+      return src
+    } else if (file) {
+      return URL.createObjectURL(file)
+    }
+  }, [file, src, error])
 
   const onRadioChanged: ChangeEventHandler<HTMLInputElement> = (ev) => {
     if (ev.target.checked && onSelect) {
@@ -62,7 +66,7 @@ export const ImageRow: FC<ImageRowProps> = ({ image, selected, onSelect, onDelet
       <div className="flex grow flex-col justify-between gap-5">
         <div className="flex flex-col gap-1">
           <div className="flex">
-            <p className="grow font-semibold">{image.name}</p>
+            <p className="grow font-semibold">{name}</p>
             {error ? (
               <Button variant="icon" className="size-5" onClick={onDelete}>
                 <CloseIcon className="size-4 text-neutral-600" />
@@ -72,11 +76,14 @@ export const ImageRow: FC<ImageRowProps> = ({ image, selected, onSelect, onDelet
               <Radio checked={selected} name="selectedImage" onChange={onRadioChanged} />
             )}
           </div>
-          <p className="text-xs text-neutral-600">{formatFileSize(image.size)}</p>
+          <p className="text-xs text-neutral-600">{formatFileSize(size)}</p>
         </div>
-        {error ? (
-          <p className="text-xs text-red-600">{error}</p>
-        ) : (
+
+        {['pending', 'uploading'].includes(status) && <ProgressBar progress={progress || 0} />}
+
+        {status === 'error' && <p className="text-xs text-red-600">{error}</p>}
+
+        {status === 'uploaded' && (
           <div className="flex items-center gap-2 text-neutral-600">
             {/* TODO: handle cropping */}
             <Button variant="tertiary">
