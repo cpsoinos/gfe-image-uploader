@@ -109,10 +109,15 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
       return { ...state, profileImages: newProfileImages }
     }
     case 'removeFile': {
+      const index = action.payload
       const newProfileImages = [...state.profileImages]
-      newProfileImages.splice(action.payload, 1)
-      return { ...state, profileImages: newProfileImages }
+      newProfileImages.splice(index, 1)
+      const newSelectedIndex =
+        index < state.selectedIndex ? state.selectedIndex - 1 : state.selectedIndex
+      return { ...state, profileImages: newProfileImages, selectedIndex: newSelectedIndex }
     }
+    case 'selectImage':
+      return { ...state, selectedIndex: action.payload }
     default:
       return state
   }
