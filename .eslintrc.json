@@ -1,7 +1,8 @@
 {
-  "plugins": ["unused-imports"],
+  "plugins": ["unused-imports", "next-on-pages"],
   "extends": [
     "next/core-web-vitals",
+    "plugin:next-on-pages/recommended",
     "plugin:storybook/recommended",
     "prettier",
     "plugin:oxlint/recommended"

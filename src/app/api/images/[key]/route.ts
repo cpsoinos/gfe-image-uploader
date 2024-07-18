@@ -10,7 +10,7 @@ type Params = {
 }
 
 // get a presigned URL to upload to R2
-export async function GET(request: NextRequest, context: { params: Params }) {
+export async function PUT(request: NextRequest, context: { params: Params }) {
   const { env } = getRequestContext()
   const searchParams = request.nextUrl.searchParams
   const contentType = searchParams.get('contentType')
@@ -40,4 +40,14 @@ export async function GET(request: NextRequest, context: { params: Params }) {
   )
 
   return new Response(signedUrl, { status: 200 })
+}
+
+// delete an image from bucket
+export async function DELETE(_request: NextRequest, context: { params: Params }) {
+  const { env } = getRequestContext()
+  const R2 = env.R2_BUCKET
+  const key = context.params.key
+  await R2.delete(key)
+
+  return new Response(null, { status: 204 })
 }
