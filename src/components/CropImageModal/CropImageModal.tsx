@@ -19,17 +19,28 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
       <Modal
         ref={mergeRefs(ref, modalRef)}
         title="Crop your picture"
-        className="w-[21.4375rem] p-6"
+        className="w-[21.4375rem] max-w-[21.4375rem] gap-4 p-6"
         onClose={onClose}
       >
-        <ImageCropper src={src} aspectRatio={1} />
+        <div className="flex flex-col gap-8">
+          <div className="flex h-[18.125rem] w-[18.4375rem] justify-center bg-neutral-950">
+            <ImageCropper src={src} aspectRatio={1} />
+          </div>
 
-        <div className="flex justify-between gap-3">
-          <Button variant="secondary" onClick={() => modalRef.current?.close()} className="w-full">
-            Cancel
-          </Button>
-          {/* TODO: confirm crop */}
-          <Button className="w-full">Confirm</Button>
+          <div className="flex justify-between gap-3">
+            <Button
+              variant="secondary"
+              onClick={() => modalRef.current?.close()}
+              className="w-full"
+              size="md"
+            >
+              Cancel
+            </Button>
+            {/* TODO: confirm crop */}
+            <Button className="w-full" size="md">
+              Confirm
+            </Button>
+          </div>
         </div>
       </Modal>
     )

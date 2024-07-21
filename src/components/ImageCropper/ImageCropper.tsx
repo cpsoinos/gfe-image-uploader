@@ -43,8 +43,14 @@ export const ImageCropper: FC<ImageCropperProps> = ({ src, aspectRatio }) => {
   const onCropChange = (_crop: PixelCrop, percentCrop: PercentCrop) => setCrop(percentCrop)
 
   return (
-    <ReactCrop crop={crop} onChange={onCropChange} aspect={aspectRatio} circularCrop>
-      <img src={src} onLoad={onImageLoad} />
+    <ReactCrop
+      crop={crop}
+      onChange={onCropChange}
+      aspect={aspectRatio}
+      circularCrop
+      className="max-h-full"
+    >
+      <img src={src} onLoad={onImageLoad} className="!max-h-[18.125rem]" />
     </ReactCrop>
   )
 }
