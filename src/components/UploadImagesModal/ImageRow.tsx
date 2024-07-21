@@ -84,14 +84,13 @@ export const ImageRow: FC<ImageRowProps> = ({
 
         {status === 'uploaded' && (
           <div className="flex items-center gap-2 text-neutral-600">
-            {/* TODO: handle cropping */}
-            <Button variant="tertiary" onClick={onCropClick}>
-              <CropIcon className="size-5" />
+            <Button variant="tertiary" onClick={onCropClick} className="text-xs md:text-sm">
+              <CropIcon className="size-4 md:size-5" />
               Crop image
             </Button>
             •
-            <Button variant="tertiary" onClick={onDelete}>
-              <TrashIcon className="size-5" />
+            <Button variant="tertiary" onClick={onDelete} className="text-xs md:text-sm">
+              <TrashIcon className="size-4 md:size-5" />
               Delete
             </Button>
           </div>
