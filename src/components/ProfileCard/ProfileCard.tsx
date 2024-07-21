@@ -1,5 +1,6 @@
 import Image from 'next/image'
-import { forwardRef, useRef, type HTMLAttributes } from 'react'
+import { forwardRef, useMemo, useRef, type HTMLAttributes } from 'react'
+import { cloudflareLoaderWithTransformations } from '@/cf-image-loader'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { Button } from '../Button/Button'
 import { CropImageModal } from '../CropImageModal/CropImageModal'
@@ -11,7 +12,6 @@ import type { LocationInfo, WorkplaceInfo } from '@/types'
 
 export interface ProfileCardProps extends HTMLAttributes<HTMLDivElement> {
   name: string
-  avatar?: string
   handle: string
   pronouns: string
   workplace: WorkplaceInfo
@@ -19,14 +19,12 @@ export interface ProfileCardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
-  (
-    { name, avatar = '/avatar-empty.svg', handle, workplace, pronouns, location, ...props },
-    ref,
-  ) => {
+  ({ name, handle, workplace, pronouns, location, ...props }, ref) => {
     const uploadImagesModalRef = useRef<HTMLDialogElement>(null)
     const cropImageModalRef = useRef<HTMLDialogElement>(null)
 
     const { state, dispatch } = useProfileImages()
+    const selectedImage = state.profileImages[state.selectedIndex]
 
     const openUploadImagesModal = () => {
       uploadImagesModalRef.current?.showModal()
@@ -44,6 +42,12 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
       uploadImagesModalRef.current?.showModal()
     }
 
+    const transformationsString = useMemo(() => {
+      const transformations = selectedImage?.transformations
+      if (!transformations) return ''
+      return `trim.width=${transformations.width},trim.height=${transformations.height},trim.left=${transformations.x},trim.top=${transformations.y}`
+    }, [selectedImage])
+
     return (
       <>
         <div
@@ -55,7 +59,8 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
 
           <div className="z-10 flex items-end justify-between">
             <Image
-              src={avatar}
+              src={selectedImage?.src || '/avatar-empty.svg'}
+              loader={cloudflareLoaderWithTransformations(transformationsString)}
               width={160}
               height={160}
               alt="avatar"

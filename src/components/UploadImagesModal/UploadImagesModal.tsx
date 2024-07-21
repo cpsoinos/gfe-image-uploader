@@ -1,7 +1,8 @@
 import mergeRefs from 'merge-refs'
-import { forwardRef, useCallback, useEffect, useRef } from 'react'
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { getPresignedUploadUrl } from '@/lib/getPresignedUploadUrl'
+import { Button } from '../Button/Button'
 import { Dropzone } from '../Dropzone/Dropzone'
 import { Modal } from '../Modal/Modal'
 import { ImageRow } from './ImageRow'
@@ -15,8 +16,9 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
   ({ onCropClick }, ref) => {
     const modalRef = useRef<HTMLDialogElement>(null)
     const { state, dispatch } = useProfileImages()
+    const [selectedIndex, setSelectedIndex] = useState<number | undefined>()
 
-    const { profileImages, error, selectedIndex } = state
+    const { profileImages, error } = state
 
     const helperText = error ? 'Remove one or more to upload more images.' : 'PNG, or JPG (Max 5MB)'
 
@@ -33,7 +35,8 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
     }
 
     const onSelected = (index: number) => {
-      dispatch({ type: 'selectImage', payload: index })
+      setSelectedIndex(index)
+      // dispatch({ type: 'selectImage', payload: index })
     }
 
     const uploadFile = useCallback(
@@ -77,6 +80,12 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
       })
     }, [profileImages, uploadFile])
 
+    const onSave = () => {
+      if (!selectedIndex) return
+      dispatch({ type: 'selectImage', payload: selectedIndex })
+      modalRef.current?.close()
+    }
+
     return (
       <Modal
         ref={mergeRefs(ref, modalRef)}
@@ -100,6 +109,15 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
               onCropClick={() => onCropClick(i)}
             />
           ))}
+        </div>
+
+        <div className="flex justify-between gap-4">
+          <Button variant="secondary" className="w-full" onClick={() => modalRef.current?.close()}>
+            Cancel
+          </Button>
+          <Button onClick={onSave} className="w-full" disabled={selectedIndex === undefined}>
+            Select image
+          </Button>
         </div>
       </Modal>
     )
