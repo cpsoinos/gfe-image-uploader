@@ -8,6 +8,8 @@ import {
   type ReactNode,
   type Reducer,
 } from 'react'
+import type { ImageTransformations } from '@/types'
+import type { Crop } from 'react-image-crop'
 
 export const MAX_NUMBER_OF_FILES = 5
 export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
@@ -51,6 +53,7 @@ type ProfileImagesAction =
   | { type: 'completeUpload'; payload: { index: number; src: string } }
   | { type: 'removeFile'; payload: number }
   | { type: 'selectImage'; payload: number }
+  | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
 
 export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesAction> = (
   state,
@@ -118,6 +121,15 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
     }
     case 'selectImage':
       return { ...state, selectedIndex: action.payload }
+    case 'crop': {
+      const { index, crop, transformations } = action.payload
+      const newProfileImages = [...state.profileImages]
+      newProfileImages[index] = profileImageReducer(newProfileImages[index], {
+        type: 'crop',
+        payload: { crop, transformations },
+      })
+      return { ...state, profileImages: newProfileImages }
+    }
     default:
       return state
   }
@@ -131,6 +143,8 @@ export interface ProfileImageState {
   file?: File
   src?: string
   error?: string
+  crop?: Crop
+  transformations?: ImageTransformations
 }
 
 type ProfileImageAction =
@@ -139,6 +153,7 @@ type ProfileImageAction =
   | { type: 'uploadProgress'; payload: number }
   | { type: 'completeUpload'; payload: string }
   | { type: 'error'; payload: string }
+  | { type: 'crop'; payload: { crop: Crop; transformations: ImageTransformations } }
 
 export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction> = (
   state,
@@ -170,6 +185,12 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
       return { ...state, status: 'uploaded', progress: 100, src: action.payload }
     case 'error':
       return { ...state, status: 'error', error: action.payload }
+    case 'crop':
+      return {
+        ...state,
+        crop: action.payload.crop,
+        transformations: action.payload.transformations,
+      }
     default:
       return state
   }

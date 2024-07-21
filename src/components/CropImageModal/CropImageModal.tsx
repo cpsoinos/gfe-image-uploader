@@ -1,5 +1,6 @@
 import mergeRefs from 'merge-refs'
 import { forwardRef, useCallback, useRef, useState } from 'react'
+import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { Button } from '../Button/Button'
 import { ImageCropper } from '../ImageCropper/ImageCropper'
 import { Modal } from '../Modal/Modal'
@@ -11,11 +12,11 @@ export interface CropImageModalProps {
   src: string
   open: boolean
   onClose: () => void
-  onConfirmCrop: (index: number, transformations: ImageTransformations) => void
+  // onConfirmCrop: (index: number, transformations: ImageTransformations) => void
 }
 
 export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>(
-  ({ imageIndex, src, onClose, onConfirmCrop }, ref) => {
+  ({ imageIndex, src, onClose }, ref) => {
     const modalRef = useRef<HTMLDialogElement>(null)
     const [originalImageDimensions, setOriginalImageDimensions] = useState<
       { width: number; height: number } | undefined
@@ -25,6 +26,8 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
     const onCropChange = (_crop: PixelCrop, percentCrop: PercentCrop) => {
       setCrop(percentCrop)
     }
+
+    const { dispatch } = useProfileImages()
 
     const onSave = useCallback(() => {
       if (!crop || !originalImageDimensions) {
@@ -36,8 +39,8 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
         width: (crop.width * originalImageDimensions.width) / 100,
         height: (crop.height * originalImageDimensions.height) / 100,
       }
-      onConfirmCrop(imageIndex, transformations)
-    }, [crop, imageIndex, onConfirmCrop, originalImageDimensions])
+      dispatch({ type: 'crop', payload: { index: imageIndex, crop, transformations } })
+    }, [crop, dispatch, imageIndex, originalImageDimensions])
 
     return (
       <Modal
