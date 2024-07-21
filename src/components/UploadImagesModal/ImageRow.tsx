@@ -1,9 +1,11 @@
 import Image from 'next/image'
 import { useMemo, type ChangeEventHandler, type FC } from 'react'
+import { cloudflareLoaderWithTransformations } from '@/cf-image-loader'
 import CloseIcon from '@/icons/close.svg'
 import CropIcon from '@/icons/crop-line.svg'
 import TrashIcon from '@/icons/delete-bin-3-line.svg'
 import FileDamagedIcon from '@/icons/file-damage-line.svg'
+import { buildTransformParams } from '@/lib/buildTransformParams'
 import { formatFileSize } from '@/lib/formatFileSize'
 import { Button } from '../Button/Button'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
@@ -26,6 +28,7 @@ export const ImageRow: FC<ImageRowProps> = ({
   progress,
   error,
   selected,
+  transformations,
   onSelect,
   onDelete,
   onCropClick,
@@ -46,12 +49,17 @@ export const ImageRow: FC<ImageRowProps> = ({
     }
   }
 
+  const transformationsString = useMemo(() => {
+    return buildTransformParams(transformations)
+  }, [transformations])
+
   return (
     <div className="flex items-center gap-4">
       {thumbnail ? (
         <Image
           className="size-20 flex-none rounded-md object-cover"
           src={thumbnail}
+          loader={cloudflareLoaderWithTransformations(transformationsString)}
           onLoad={() => URL.revokeObjectURL(thumbnail)}
           width={80}
           height={80}

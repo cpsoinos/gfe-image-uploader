@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { forwardRef, useMemo, useRef, type HTMLAttributes } from 'react'
 import { cloudflareLoaderWithTransformations } from '@/cf-image-loader'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
+import { buildTransformParams } from '@/lib/buildTransformParams'
 import { Button } from '../Button/Button'
 import { CropImageModal } from '../CropImageModal/CropImageModal'
 import { UploadImagesModal } from '../UploadImagesModal/UploadImagesModal'
@@ -43,9 +44,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
     }
 
     const transformationsString = useMemo(() => {
-      const transformations = selectedImage?.transformations
-      if (!transformations) return ''
-      return `trim.width=${transformations.width},trim.height=${transformations.height},trim.left=${transformations.x},trim.top=${transformations.y}`
+      return buildTransformParams(selectedImage?.transformations)
     }, [selectedImage])
 
     return (
