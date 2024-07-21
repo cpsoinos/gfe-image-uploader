@@ -21,7 +21,9 @@ export const Default: Story = {
   render: (args) => {
     const ref = useRef<HTMLDialogElement>(null)
 
-    const openModal = () => ref.current?.showModal()
+    const openModal = () => {
+      ref.current?.showModal()
+    }
 
     return (
       <>

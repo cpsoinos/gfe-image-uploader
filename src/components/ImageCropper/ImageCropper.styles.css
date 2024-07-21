@@ -1,0 +1,18 @@
+.ReactCrop {
+  --rc-drag-handle-size: theme('spacing.2');
+  --rc-drag-handle-mobile-size: theme('spacing.2');
+  --rc-drag-handle-bg-colour: white;
+  --rc-focus-color: theme('colors.indigo.600');
+}
+
+.ReactCrop__crop-mask > rect {
+  fill-opacity: 0.2;
+}
+
+.ReactCrop--no-animate .ReactCrop__crop-selection {
+  outline: none;
+}
+
+.ReactCrop--circular-crop .ReactCrop__crop-selection::after {
+  border: none;
+}

@@ -1,16 +1,18 @@
 import mergeRefs from 'merge-refs'
-import Image from 'next/image'
 import { forwardRef, useRef } from 'react'
 import { Button } from '../Button/Button'
+import { ImageCropper } from '../ImageCropper/ImageCropper'
 import { Modal } from '../Modal/Modal'
 
 export interface CropImageModalProps {
   imageIndex: number
   src: string
+  open: boolean
+  onClose: () => void
 }
 
 export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>(
-  ({ imageIndex, src }, ref) => {
+  ({ imageIndex, src, onClose }, ref) => {
     const modalRef = useRef<HTMLDialogElement>(null)
 
     return (
@@ -18,16 +20,9 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
         ref={mergeRefs(ref, modalRef)}
         title="Crop your picture"
         className="w-[21.4375rem] p-6"
+        onClose={onClose}
       >
-        <div className="h-[18.125rem] bg-neutral-950">
-          <Image
-            src={src}
-            alt="Crop your picture"
-            className="mx-auto h-full w-full object-contain"
-            width={295}
-            height={290}
-          />
-        </div>
+        <ImageCropper src={src} aspectRatio={1} />
 
         <div className="flex justify-between gap-3">
           <Button variant="secondary" onClick={() => modalRef.current?.close()} className="w-full">
