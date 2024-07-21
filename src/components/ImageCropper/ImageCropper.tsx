@@ -1,6 +1,6 @@
 import 'react-image-crop/dist/ReactCrop.css'
 import './ImageCropper.styles.css'
-import { useState, type FC, type ReactEventHandler } from 'react'
+import { type Dispatch, type FC, type ReactEventHandler, type SetStateAction } from 'react'
 import {
   centerCrop,
   makeAspectCrop,
@@ -13,13 +13,25 @@ import {
 export interface ImageCropperProps {
   src: string
   aspectRatio: number
+  crop?: Crop
+  setCrop: Dispatch<SetStateAction<Crop | undefined>>
+  onCropChange: (crop: PixelCrop, percentCrop: PercentCrop) => void
+  setOriginalImageDimensions: Dispatch<
+    SetStateAction<{ width: number; height: number } | undefined>
+  >
 }
 
-export const ImageCropper: FC<ImageCropperProps> = ({ src, aspectRatio }) => {
-  const [crop, setCrop] = useState<Crop>()
-
+export const ImageCropper: FC<ImageCropperProps> = ({
+  src,
+  aspectRatio,
+  crop,
+  setCrop,
+  onCropChange,
+  setOriginalImageDimensions,
+}) => {
   const onImageLoad: ReactEventHandler<HTMLImageElement> = (e) => {
     const { naturalWidth: width, naturalHeight: height } = e.currentTarget
+    setOriginalImageDimensions({ width, height })
 
     const crop = centerCrop(
       makeAspectCrop(
@@ -39,8 +51,6 @@ export const ImageCropper: FC<ImageCropperProps> = ({ src, aspectRatio }) => {
 
     setCrop(crop)
   }
-
-  const onCropChange = (_crop: PixelCrop, percentCrop: PercentCrop) => setCrop(percentCrop)
 
   return (
     <ReactCrop
