@@ -25,6 +25,8 @@ export const ProfileImagesProvider: FC<{ children: ReactNode }> = ({ children })
   const [state, dispatch] = useReducer(profileImagesReducer, {
     profileImages: [],
     selectedIndex: -1,
+    isUploadImagesModalOpen: false,
+    isCropImageModalOpen: false,
   })
 
   const value = useMemo(() => ({ state, dispatch }), [state])
@@ -40,11 +42,25 @@ export const useProfileImages = () => {
   return context
 }
 
-export interface ProfileImagesState {
+export type ProfileImagesState = {
   profileImages: ProfileImageState[]
   error?: string
   selectedIndex: number
-}
+  activeIndex?: number
+} & (
+  | {
+      isUploadImagesModalOpen: false
+      isCropImageModalOpen: false
+    }
+  | {
+      isUploadImagesModalOpen: true
+      isCropImageModalOpen: false
+    }
+  | {
+      isUploadImagesModalOpen: false
+      isCropImageModalOpen: true
+    }
+)
 
 type ProfileImagesAction =
   | { type: 'addFile'; payload: File }
@@ -54,6 +70,10 @@ type ProfileImagesAction =
   | { type: 'removeFile'; payload: number }
   | { type: 'selectImage'; payload: number }
   | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
+  | { type: 'openUploadImagesModal' }
+  | { type: 'closeUploadImagesModal' }
+  | { type: 'openCropImageModal'; payload: { index: number } }
+  | { type: 'closeCropImageModal' }
 
 export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesAction> = (
   state,
@@ -130,6 +150,19 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
       })
       return { ...state, profileImages: newProfileImages }
     }
+    case 'openUploadImagesModal':
+      return { ...state, isUploadImagesModalOpen: true, isCropImageModalOpen: false }
+    case 'closeUploadImagesModal':
+      return { ...state, isUploadImagesModalOpen: false }
+    case 'openCropImageModal':
+      return {
+        ...state,
+        isUploadImagesModalOpen: false,
+        isCropImageModalOpen: true,
+        activeIndex: action.payload.index,
+      }
+    case 'closeCropImageModal':
+      return { ...state, isUploadImagesModalOpen: true, isCropImageModalOpen: false }
     default:
       return state
   }
@@ -182,7 +215,12 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
     case 'uploadProgress':
       return { ...state, status: 'uploading', progress: action.payload }
     case 'completeUpload':
-      return { ...state, status: 'uploaded', progress: 100, src: action.payload }
+      return {
+        ...state,
+        status: 'uploaded',
+        progress: 100,
+        src: `https://gfe-image-uploader-r2.anderapps.com/${state.name}`,
+      }
     case 'error':
       return { ...state, status: 'error', error: action.payload }
     case 'crop':

@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import { forwardRef, useRef, type HTMLAttributes } from 'react'
+import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { Button } from '../Button/Button'
+import { CropImageModal } from '../CropImageModal/CropImageModal'
 import { UploadImagesModal } from '../UploadImagesModal/UploadImagesModal'
 import { Location } from './Location'
 import { ProfileDetails } from './ProfileDetails'
@@ -22,8 +24,25 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
     ref,
   ) => {
     const uploadImagesModalRef = useRef<HTMLDialogElement>(null)
+    const cropImageModalRef = useRef<HTMLDialogElement>(null)
 
-    const openUploadImagesModal = () => uploadImagesModalRef.current?.showModal()
+    const { state, dispatch } = useProfileImages()
+
+    const openUploadImagesModal = () => {
+      uploadImagesModalRef.current?.showModal()
+      dispatch({ type: 'openUploadImagesModal' })
+    }
+
+    const openCropImageModal = (index: number) => {
+      dispatch({ type: 'openCropImageModal', payload: { index } })
+      uploadImagesModalRef.current?.close()
+      cropImageModalRef.current?.showModal()
+    }
+
+    const onCropImageModalClose = () => {
+      dispatch({ type: 'closeCropImageModal' })
+      uploadImagesModalRef.current?.showModal()
+    }
 
     return (
       <>
@@ -58,7 +77,12 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
           </ProfileDetails>
         </div>
 
-        <UploadImagesModal ref={uploadImagesModalRef} />
+        <UploadImagesModal
+          ref={uploadImagesModalRef}
+          onCropClick={openCropImageModal}
+          onClose={() => dispatch({ type: 'closeUploadImagesModal' })}
+        />
+        <CropImageModal ref={cropImageModalRef} onClose={onCropImageModalClose} />
       </>
     )
   },

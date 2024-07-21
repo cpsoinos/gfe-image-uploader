@@ -10,13 +10,11 @@ import { ProgressBar } from '../ProgressBar/ProgressBar'
 import { Radio } from '../Radio/Radio'
 import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
 
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
-const VALID_IMAGE_TYPES = ['image/png', 'image/jpeg']
-
 export interface ImageRowProps extends ProfileImageState {
   selected?: boolean
   onSelect: () => void
   onDelete: () => void
+  onCropClick: () => void
 }
 
 export const ImageRow: FC<ImageRowProps> = ({
@@ -30,6 +28,7 @@ export const ImageRow: FC<ImageRowProps> = ({
   selected,
   onSelect,
   onDelete,
+  onCropClick,
 }) => {
   const thumbnail = useMemo(() => {
     if (error) {
@@ -86,7 +85,7 @@ export const ImageRow: FC<ImageRowProps> = ({
         {status === 'uploaded' && (
           <div className="flex items-center gap-2 text-neutral-600">
             {/* TODO: handle cropping */}
-            <Button variant="tertiary">
+            <Button variant="tertiary" onClick={onCropClick}>
               <CropIcon className="size-5" />
               Crop image
             </Button>
