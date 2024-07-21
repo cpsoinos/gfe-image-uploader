@@ -50,7 +50,8 @@ export const ImageCropper: FC<ImageCropperProps> = ({ src, aspectRatio }) => {
       circularCrop
       className="max-h-full"
     >
-      <img src={src} onLoad={onImageLoad} className="!max-h-[18.125rem]" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} onLoad={onImageLoad} className="!max-h-[18.125rem]" alt="To be cropped" />
     </ReactCrop>
   )
 }
