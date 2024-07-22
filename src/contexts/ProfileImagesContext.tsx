@@ -8,6 +8,7 @@ import {
   type ReactNode,
   type Reducer,
 } from 'react'
+import { R2_BASE_URL } from '@/lib/images/constants'
 import type { ImageTransformations } from '@/types'
 import type { Crop } from 'react-image-crop'
 
@@ -218,7 +219,7 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
         ...state,
         status: 'uploaded',
         progress: 100,
-        src: `https://gfe-image-uploader-r2.anderapps.com/${state.name}`,
+        src: `${R2_BASE_URL}/${state.name}`,
       }
     case 'error':
       return { ...state, status: 'error', error: action.payload }

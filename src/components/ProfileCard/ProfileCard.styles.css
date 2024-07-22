@@ -1,0 +1,30 @@
+.profile-card__cover {
+  background-image: image-set(
+    url('https://portfolio.anderapps.com/cdn-cgi/image/width=320,quality=75,format=auto,rotate=270/https://gfe-image-uploader-r2.anderapps.com/cover.jpg')
+      1x,
+    url('https://portfolio.anderapps.com/cdn-cgi/image/width=640,quality=75,format=auto,rotate=270/https://gfe-image-uploader-r2.anderapps.com/cover.jpg')
+      2x
+  );
+}
+
+@media screen(md) {
+  .profile-card__cover {
+    background-image: image-set(
+      url('https://portfolio.anderapps.com/cdn-cgi/image/width=672,quality=75,format=auto,rotate=270/https://gfe-image-uploader-r2.anderapps.com/cover.jpg')
+        1x,
+      url('https://portfolio.anderapps.com/cdn-cgi/image/width=1344,quality=75,format=auto,rotate=270/https://gfe-image-uploader-r2.anderapps.com/cover.jpg')
+        2x
+    );
+  }
+}
+
+@media screen(lg) {
+  .profile-card__cover {
+    background-image: image-set(
+      url('https://portfolio.anderapps.com/cdn-cgi/image/width=768,quality=75,format=auto,rotate=270/https://gfe-image-uploader-r2.anderapps.com/cover.jpg')
+        1x,
+      url('https://portfolio.anderapps.com/cdn-cgi/image/width=1536,quality=75,format=auto,rotate=270/https://gfe-image-uploader-r2.anderapps.com/cover.jpg')
+        2x
+    );
+  }
+}
