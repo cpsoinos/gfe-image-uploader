@@ -1,5 +1,5 @@
-import clsx from 'clsx'
 import { useRef, useState, type ChangeEventHandler, type DragEventHandler, type FC } from 'react'
+import { twJoin } from 'tailwind-merge'
 import UploadCloud from '@/icons/upload-cloud-2-line.svg'
 
 interface DropzoneProps {
@@ -73,12 +73,9 @@ export const Dropzone: FC<DropzoneProps> = ({
     <>
       <div
         role="button"
-        className={clsx(
+        className={twJoin(
           'flex h-48 w-full flex-col items-center justify-center gap-5 rounded border border-neutral-200 py-6',
-          {
-            'bg-neutral-50': !isDragging,
-            'bg-neutral-100': isDragging,
-          },
+          isDragging ? 'bg-neutral-100' : 'bg-neutral-50',
         )}
         onClick={handleClick}
         onDragEnter={handleDragEnter}
