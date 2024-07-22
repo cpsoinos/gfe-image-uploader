@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { useMemo, type ChangeEventHandler, type FC } from 'react'
+import CheckIcon from '@/icons/check-line.svg'
 import CloseIcon from '@/icons/close.svg'
 import CropIcon from '@/icons/crop-line.svg'
 import TrashIcon from '@/icons/delete-bin-3-line.svg'
@@ -89,6 +90,13 @@ export const ImageRow: FC<ImageRowProps> = ({
         {['pending', 'uploading'].includes(status) && <ProgressBar progress={progress || 0} />}
 
         {status === 'error' && <p className="text-xs text-red-600">{error}</p>}
+
+        {status === 'uploadComplete' && (
+          <div className="flex items-center gap-2 text-xs font-medium text-green-700">
+            <CheckIcon className="size-5" />
+            Upload success!
+          </div>
+        )}
 
         {status === 'uploaded' && (
           <div className="flex items-center gap-2 text-neutral-600">

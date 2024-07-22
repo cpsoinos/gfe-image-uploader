@@ -51,7 +51,7 @@ export const Default: Story = {
     useEffect(() => {
       dispatch({ type: 'addFile', payload: new File([''], 'avatar.jpg', { type: 'image/jpeg' }) })
       dispatch({
-        type: 'completeUpload',
+        type: 'uploadComplete',
         payload: { index: 0 },
       })
       dispatch({ type: 'selectImage', payload: 0 })

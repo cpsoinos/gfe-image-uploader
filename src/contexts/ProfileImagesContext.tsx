@@ -62,9 +62,11 @@ export type ProfileImagesState = {
 
 type ProfileImagesAction =
   | { type: 'addFile'; payload: File }
-  | { type: 'beginUpload'; payload: { index: number } }
+  | { type: 'uploadStart'; payload: { index: number } }
   | { type: 'uploadProgress'; payload: { index: number; progress: number } }
-  | { type: 'completeUpload'; payload: { index: number } }
+  | { type: 'uploadError'; payload: { index: number; error: string } }
+  | { type: 'uploadSuccess'; payload: { index: number } }
+  | { type: 'uploadComplete'; payload: { index: number } }
   | { type: 'removeFile'; payload: number }
   | { type: 'selectImage'; payload: number }
   | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
@@ -97,12 +99,12 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
         }
       }
     }
-    case 'beginUpload': {
+    case 'uploadStart': {
       const newProfileImages = [...state.profileImages]
       newProfileImages[action.payload.index] = profileImageReducer(
         newProfileImages[action.payload.index],
         {
-          type: 'beginUpload',
+          type: 'uploadStart',
         },
       )
       return { ...state, profileImages: newProfileImages }
@@ -118,12 +120,33 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
       )
       return { ...state, profileImages: newProfileImages }
     }
-    case 'completeUpload': {
+    case 'uploadError': {
       const newProfileImages = [...state.profileImages]
       newProfileImages[action.payload.index] = profileImageReducer(
         newProfileImages[action.payload.index],
         {
-          type: 'completeUpload',
+          type: 'error',
+          payload: action.payload.error,
+        },
+      )
+      return { ...state, profileImages: newProfileImages }
+    }
+    case 'uploadSuccess': {
+      const newProfileImages = [...state.profileImages]
+      newProfileImages[action.payload.index] = profileImageReducer(
+        newProfileImages[action.payload.index],
+        {
+          type: 'uploadSuccess',
+        },
+      )
+      return { ...state, profileImages: newProfileImages }
+    }
+    case 'uploadComplete': {
+      const newProfileImages = [...state.profileImages]
+      newProfileImages[action.payload.index] = profileImageReducer(
+        newProfileImages[action.payload.index],
+        {
+          type: 'uploadComplete',
         },
       )
       return { ...state, profileImages: newProfileImages }
@@ -166,7 +189,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
 }
 
 export interface ProfileImageState {
-  status: 'pending' | 'uploading' | 'uploaded' | 'error'
+  status: 'pending' | 'uploading' | 'uploadComplete' | 'uploaded' | 'error'
   progress?: number
   name: string
   size: number
@@ -179,9 +202,11 @@ export interface ProfileImageState {
 
 type ProfileImageAction =
   | { type: 'validate' }
-  | { type: 'beginUpload' }
+  | { type: 'uploadStart' }
   | { type: 'uploadProgress'; payload: number }
-  | { type: 'completeUpload' }
+  | { type: 'uploadError'; payload: string }
+  | { type: 'uploadSuccess' }
+  | { type: 'uploadComplete' }
   | { type: 'error'; payload: string }
   | { type: 'crop'; payload: { crop: Crop; transformations: ImageTransformations } }
 
@@ -207,16 +232,23 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
         return state
       }
     }
-    case 'beginUpload':
+    case 'uploadStart':
       return { ...state, status: 'uploading', progress: 0 }
     case 'uploadProgress':
       return { ...state, status: 'uploading', progress: action.payload }
-    case 'completeUpload':
+    case 'uploadError':
+      return { ...state, status: 'error', error: action.payload }
+    case 'uploadSuccess':
+      return {
+        ...state,
+        status: 'uploadComplete',
+        progress: 100,
+        src: `${R2_BASE_URL}/${state.name}`,
+      }
+    case 'uploadComplete':
       return {
         ...state,
         status: 'uploaded',
-        progress: 100,
-        src: `${R2_BASE_URL}/${state.name}`,
       }
     case 'error':
       return { ...state, status: 'error', error: action.payload }
