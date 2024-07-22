@@ -1,6 +1,7 @@
 import mergeRefs from 'merge-refs'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
+import { useToasts } from '@/contexts/ToastsContext'
 import { getPresignedUploadUrl } from '@/lib/getPresignedUploadUrl'
 import { Button } from '../Button/Button'
 import { Dropzone } from '../Dropzone/Dropzone'
@@ -15,8 +16,9 @@ export interface UploadImagesModalProps {
 export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModalProps>(
   ({ onCropClick }, ref) => {
     const modalRef = useRef<HTMLDialogElement>(null)
-    const { state, dispatch } = useProfileImages()
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>()
+    const { state, dispatch } = useProfileImages()
+    const { addToast } = useToasts()
 
     const { profileImages, error } = state
 
@@ -82,6 +84,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
       if (!selectedIndex) return
       dispatch({ type: 'selectImage', payload: selectedIndex })
       modalRef.current?.close()
+      addToast({ type: 'success', message: 'Changes saved successfully' })
     }
 
     return (
