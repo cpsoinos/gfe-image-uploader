@@ -1,11 +1,14 @@
 import mergeRefs from 'merge-refs'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
+import { useToasts } from '@/contexts/ToastsContext'
 import { getPresignedUploadUrl } from '@/lib/getPresignedUploadUrl'
 import { Button } from '../Button/Button'
 import { Dropzone } from '../Dropzone/Dropzone'
 import { Modal } from '../Modal/Modal'
 import { ImageRow } from './ImageRow'
+
+const SUCCESS_MESSAGE_TIMEOUT = 350
 
 export interface UploadImagesModalProps {
   onClose: () => void
@@ -15,8 +18,9 @@ export interface UploadImagesModalProps {
 export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModalProps>(
   ({ onCropClick }, ref) => {
     const modalRef = useRef<HTMLDialogElement>(null)
-    const { state, dispatch } = useProfileImages()
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>()
+    const { state, dispatch } = useProfileImages()
+    const { addToast } = useToasts()
 
     const { profileImages, error } = state
 
@@ -54,17 +58,34 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
 
         xhr.onload = () => {
           if (xhr.status === 200) {
-            dispatch({ type: 'completeUpload', payload: { index } })
+            dispatch({ type: 'uploadSuccess', payload: { index } })
+            setTimeout(() => {
+              dispatch({ type: 'uploadComplete', payload: { index } })
+            }, SUCCESS_MESSAGE_TIMEOUT)
           } else {
-            console.error('Error uploading file')
+            dispatch({
+              type: 'uploadError',
+              payload: {
+                index,
+                error:
+                  'An unexpected error occurred during the upload. Please contact support if the issue persists.',
+              },
+            })
           }
         }
 
         xhr.onerror = () => {
-          console.error('Error uploading file')
+          dispatch({
+            type: 'uploadError',
+            payload: {
+              index,
+              error:
+                'An error occurred during the upload. Please check your network connection and try again.',
+            },
+          })
         }
 
-        dispatch({ type: 'beginUpload', payload: { index } })
+        dispatch({ type: 'uploadStart', payload: { index } })
         xhr.send(file)
       },
       [dispatch],
@@ -82,6 +103,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
       if (!selectedIndex) return
       dispatch({ type: 'selectImage', payload: selectedIndex })
       modalRef.current?.close()
+      addToast({ type: 'success', message: 'Changes saved successfully' })
     }
 
     return (
