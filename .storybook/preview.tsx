@@ -4,6 +4,7 @@ import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from '@storybook/addon-viewport'
 import React from 'react'
 import { ProfileImagesProvider } from '../src/contexts/ProfileImagesContext'
 import { ToastsProvider } from '../src/contexts/ToastsContext'
+import { ToastsContainer } from '../src/components/Toast/ToastsContainer'
 import { initialize, mswLoader } from 'msw-storybook-addon'
 
 // Initialize MSW
@@ -15,6 +16,7 @@ const preview: Preview = {
       return (
         <ToastsProvider>
           <ProfileImagesProvider>
+            <ToastsContainer />
             <Story />
           </ProfileImagesProvider>
         </ToastsProvider>

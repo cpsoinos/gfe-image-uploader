@@ -44,7 +44,6 @@ export const Default: Story = {
             Error toast
           </Button>
         </div>
-        <ToastsContainer />
       </>
     )
   },
