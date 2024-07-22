@@ -36,7 +36,6 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
 
     const onSelected = (index: number) => {
       setSelectedIndex(index)
-      // dispatch({ type: 'selectImage', payload: index })
     }
 
     const uploadFile = useCallback(
