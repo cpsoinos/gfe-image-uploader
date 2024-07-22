@@ -8,12 +8,9 @@ import {
   type ReactNode,
   type Reducer,
 } from 'react'
-import { R2_BASE_URL } from '@/lib/images/constants'
+import { MAX_FILE_SIZE_BYTES, MAX_NUMBER_OF_FILES, R2_BASE_URL } from '@/lib/images/constants'
 import type { ImageTransformations } from '@/types'
 import type { Crop } from 'react-image-crop'
-
-export const MAX_NUMBER_OF_FILES = 5
-export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 
 export interface ProfileImagesContextValue {
   state: ProfileImagesState
