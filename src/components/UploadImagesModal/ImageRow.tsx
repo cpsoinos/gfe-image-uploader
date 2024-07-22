@@ -59,7 +59,7 @@ export const ImageRow: FC<ImageRowProps> = ({
         <Image
           className="size-20 flex-none rounded-md object-cover"
           src={thumbnail}
-          loader={cloudflareLoaderWithTransformations(transformationsString)}
+          loader={transformations && cloudflareLoaderWithTransformations(transformationsString)}
           onLoad={() => URL.revokeObjectURL(thumbnail)}
           width={80}
           height={80}
