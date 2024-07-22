@@ -1,5 +1,3 @@
-// file: env.d.ts
-
 interface CloudflareEnv {
   R2_BUCKET: R2Bucket
   R2_ACCESS_KEY_ID: string
@@ -7,4 +5,6 @@ interface CloudflareEnv {
   CF_ACCOUNT_ID: string
   R2_BUCKET_NAME: string
   NEXT_PUBLIC_HOST: string
+  NEXT_PUBLIC_R2_BASE_URL: string
+  NEXT_PUBLIC_TRANSFORM_BASE_URL: string
 }

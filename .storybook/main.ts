@@ -55,6 +55,8 @@ const config: StorybookConfig = {
   env: (config) => ({
     ...config,
     NEXT_PUBLIC_HOST: 'http://localhost:3000',
+    NEXT_PUBLIC_R2_BASE_URL: 'https://gfe-image-uploader-r2.anderapps.com',
+    NEXT_PUBLIC_TRANSFORM_BASE_URL: 'https://portfolio.anderapps.com/cdn-cgi/image',
   }),
 }
 
