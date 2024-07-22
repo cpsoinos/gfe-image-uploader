@@ -49,7 +49,7 @@ export const Default: Story = {
     const { dispatch } = useProfileImages()
 
     useEffect(() => {
-      dispatch({ type: 'addFile', payload: new File([''], 'image.jpg', { type: 'image/jpeg' }) })
+      dispatch({ type: 'addFile', payload: new File([''], 'avatar.jpg', { type: 'image/jpeg' }) })
       dispatch({
         type: 'completeUpload',
         payload: { index: 0 },
