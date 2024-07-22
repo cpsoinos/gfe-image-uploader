@@ -55,8 +55,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
 
         xhr.onload = () => {
           if (xhr.status === 200) {
-            console.log(xhr.responseText)
-            dispatch({ type: 'completeUpload', payload: { index, src: xhr.responseText } })
+            dispatch({ type: 'completeUpload', payload: { index } })
           } else {
             console.error('Error uploading file')
           }

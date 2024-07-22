@@ -66,7 +66,7 @@ type ProfileImagesAction =
   | { type: 'addFile'; payload: File }
   | { type: 'beginUpload'; payload: { index: number } }
   | { type: 'uploadProgress'; payload: { index: number; progress: number } }
-  | { type: 'completeUpload'; payload: { index: number; src: string } }
+  | { type: 'completeUpload'; payload: { index: number } }
   | { type: 'removeFile'; payload: number }
   | { type: 'selectImage'; payload: number }
   | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
@@ -126,7 +126,6 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
         newProfileImages[action.payload.index],
         {
           type: 'completeUpload',
-          payload: action.payload.src,
         },
       )
       return { ...state, profileImages: newProfileImages }
@@ -184,7 +183,7 @@ type ProfileImageAction =
   | { type: 'validate' }
   | { type: 'beginUpload' }
   | { type: 'uploadProgress'; payload: number }
-  | { type: 'completeUpload'; payload: string }
+  | { type: 'completeUpload' }
   | { type: 'error'; payload: string }
   | { type: 'crop'; payload: { crop: Crop; transformations: ImageTransformations } }
 

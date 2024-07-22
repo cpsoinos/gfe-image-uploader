@@ -1,4 +1,6 @@
-import { useRef } from 'react'
+import { fn } from '@storybook/test'
+import { useEffect, useRef } from 'react'
+import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { Button } from '../Button/Button'
 import { CropImageModal } from './CropImageModal'
 import type { Meta, StoryObj } from '@storybook/react'
@@ -8,8 +10,7 @@ const meta = {
   component: CropImageModal,
   tags: ['autodocs'],
   args: {
-    imageIndex: 0,
-    src: '/image.jpg',
+    onClose: fn(),
   },
 } satisfies Meta<typeof CropImageModal>
 
@@ -19,11 +20,22 @@ type Story = StoryObj<typeof CropImageModal>
 
 export const Default: Story = {
   render: (args) => {
+    const { state, dispatch } = useProfileImages()
     const ref = useRef<HTMLDialogElement>(null)
 
     const openModal = () => {
+      dispatch({ type: 'openCropImageModal', payload: { index: 0 } })
       ref.current?.showModal()
     }
+
+    useEffect(() => {
+      if (state.profileImages.length) return
+      dispatch({ type: 'addFile', payload: new File([''], 'image.jpg', { type: 'image/jpeg' }) })
+      dispatch({
+        type: 'completeUpload',
+        payload: { index: 0 },
+      })
+    }, [dispatch, state.profileImages.length])
 
     return (
       <>
