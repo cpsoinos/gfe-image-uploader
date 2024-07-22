@@ -1,3 +1,5 @@
+'use client'
+
 import mergeRefs from 'merge-refs'
 import { forwardRef, useCallback, useRef, useState } from 'react'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'

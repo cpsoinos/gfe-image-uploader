@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, useState, type ChangeEventHandler, type DragEventHandler, type FC } from 'react'
 import { twJoin } from 'tailwind-merge'
 import UploadCloud from '@/icons/upload-cloud-2-line.svg'
