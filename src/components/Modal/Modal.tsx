@@ -1,7 +1,8 @@
-import { forwardRef, useRef, type DialogHTMLAttributes, type PropsWithChildren } from 'react'
-import { Button } from '../Button/Button'
 import mergeRefs from 'merge-refs'
+import { forwardRef, useRef, type DialogHTMLAttributes, type PropsWithChildren } from 'react'
+import { twMerge } from 'tailwind-merge'
 import CloseIcon from '@/icons/close.svg'
+import { Button } from '../Button/Button'
 
 export interface ModalProps extends DialogHTMLAttributes<HTMLDialogElement> {
   title: string
@@ -19,8 +20,11 @@ export const Modal = forwardRef<HTMLDialogElement, PropsWithChildren<ModalProps>
     return (
       <dialog
         ref={mergeRefs(ref, localRef)}
-        className="w-full max-w-xs flex-col gap-8 rounded-lg bg-white px-6 py-8 backdrop:bg-neutral-950 backdrop:opacity-70 open:flex md:max-w-xl"
         {...props}
+        className={twMerge(
+          'w-full max-w-xs flex-col gap-8 rounded-lg bg-white px-6 py-8 backdrop:bg-neutral-950 backdrop:opacity-70 open:flex md:max-w-xl',
+          props.className,
+        )}
       >
         <div>
           <div className="flex justify-between">

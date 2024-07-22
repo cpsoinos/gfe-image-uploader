@@ -1,22 +1,22 @@
 import Image from 'next/image'
 import { useMemo, type ChangeEventHandler, type FC } from 'react'
-import { Radio } from '../Radio/Radio'
-import { formatFileSize } from '@/lib/formatFileSize'
-import { Button } from '../Button/Button'
+import CloseIcon from '@/icons/close.svg'
 import CropIcon from '@/icons/crop-line.svg'
 import TrashIcon from '@/icons/delete-bin-3-line.svg'
 import FileDamagedIcon from '@/icons/file-damage-line.svg'
-import CloseIcon from '@/icons/close.svg'
-import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
+import { formatFileSize } from '@/lib/formatFileSize'
+import { buildTransformParams } from '@/lib/images/buildTransformParams'
+import { cloudflareLoaderWithTransformations } from '@/lib/images/cloudflareImageLoader'
+import { Button } from '../Button/Button'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
-
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
-const VALID_IMAGE_TYPES = ['image/png', 'image/jpeg']
+import { Radio } from '../Radio/Radio'
+import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
 
 export interface ImageRowProps extends ProfileImageState {
   selected?: boolean
   onSelect: () => void
   onDelete: () => void
+  onCropClick: () => void
 }
 
 export const ImageRow: FC<ImageRowProps> = ({
@@ -28,8 +28,10 @@ export const ImageRow: FC<ImageRowProps> = ({
   progress,
   error,
   selected,
+  transformations,
   onSelect,
   onDelete,
+  onCropClick,
 }) => {
   const thumbnail = useMemo(() => {
     if (error) {
@@ -47,12 +49,17 @@ export const ImageRow: FC<ImageRowProps> = ({
     }
   }
 
+  const transformationsString = useMemo(() => {
+    return buildTransformParams(transformations)
+  }, [transformations])
+
   return (
     <div className="flex items-center gap-4">
       {thumbnail ? (
         <Image
           className="size-20 flex-none rounded-md object-cover"
           src={thumbnail}
+          loader={transformations && cloudflareLoaderWithTransformations(transformationsString)}
           onLoad={() => URL.revokeObjectURL(thumbnail)}
           width={80}
           height={80}
@@ -85,14 +92,13 @@ export const ImageRow: FC<ImageRowProps> = ({
 
         {status === 'uploaded' && (
           <div className="flex items-center gap-2 text-neutral-600">
-            {/* TODO: handle cropping */}
-            <Button variant="tertiary">
-              <CropIcon className="size-5" />
+            <Button variant="tertiary" onClick={onCropClick} className="text-xs md:text-sm">
+              <CropIcon className="size-4 md:size-5" />
               Crop image
             </Button>
             •
-            <Button variant="tertiary" onClick={onDelete}>
-              <TrashIcon className="size-5" />
+            <Button variant="tertiary" onClick={onDelete} className="text-xs md:text-sm">
+              <TrashIcon className="size-4 md:size-5" />
               Delete
             </Button>
           </div>

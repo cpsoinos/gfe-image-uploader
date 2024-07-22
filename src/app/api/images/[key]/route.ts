@@ -1,6 +1,6 @@
-import { getRequestContext } from '@cloudflare/next-on-pages'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { getRequestContext } from '@cloudflare/next-on-pages'
 import type { NextRequest } from 'next/server'
 
 export const runtime = 'edge'

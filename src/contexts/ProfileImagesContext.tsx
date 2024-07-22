@@ -8,9 +8,9 @@ import {
   type ReactNode,
   type Reducer,
 } from 'react'
-
-export const MAX_NUMBER_OF_FILES = 5
-export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
+import { MAX_FILE_SIZE_BYTES, MAX_NUMBER_OF_FILES, R2_BASE_URL } from '@/lib/images/constants'
+import type { ImageTransformations } from '@/types'
+import type { Crop } from 'react-image-crop'
 
 export interface ProfileImagesContextValue {
   state: ProfileImagesState
@@ -23,6 +23,8 @@ export const ProfileImagesProvider: FC<{ children: ReactNode }> = ({ children })
   const [state, dispatch] = useReducer(profileImagesReducer, {
     profileImages: [],
     selectedIndex: -1,
+    isUploadImagesModalOpen: false,
+    isCropImageModalOpen: false,
   })
 
   const value = useMemo(() => ({ state, dispatch }), [state])
@@ -38,19 +40,38 @@ export const useProfileImages = () => {
   return context
 }
 
-export interface ProfileImagesState {
+export type ProfileImagesState = {
   profileImages: ProfileImageState[]
   error?: string
   selectedIndex: number
-}
+  activeIndex?: number
+} & (
+  | {
+      isUploadImagesModalOpen: false
+      isCropImageModalOpen: false
+    }
+  | {
+      isUploadImagesModalOpen: true
+      isCropImageModalOpen: false
+    }
+  | {
+      isUploadImagesModalOpen: false
+      isCropImageModalOpen: true
+    }
+)
 
 type ProfileImagesAction =
   | { type: 'addFile'; payload: File }
   | { type: 'beginUpload'; payload: { index: number } }
   | { type: 'uploadProgress'; payload: { index: number; progress: number } }
-  | { type: 'completeUpload'; payload: { index: number; src: string } }
+  | { type: 'completeUpload'; payload: { index: number } }
   | { type: 'removeFile'; payload: number }
   | { type: 'selectImage'; payload: number }
+  | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
+  | { type: 'openUploadImagesModal' }
+  | { type: 'closeUploadImagesModal' }
+  | { type: 'openCropImageModal'; payload: { index: number } }
+  | { type: 'closeCropImageModal' }
 
 export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesAction> = (
   state,
@@ -103,7 +124,6 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
         newProfileImages[action.payload.index],
         {
           type: 'completeUpload',
-          payload: action.payload.src,
         },
       )
       return { ...state, profileImages: newProfileImages }
@@ -118,6 +138,28 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
     }
     case 'selectImage':
       return { ...state, selectedIndex: action.payload }
+    case 'crop': {
+      const { index, crop, transformations } = action.payload
+      const newProfileImages = [...state.profileImages]
+      newProfileImages[index] = profileImageReducer(newProfileImages[index], {
+        type: 'crop',
+        payload: { crop, transformations },
+      })
+      return { ...state, profileImages: newProfileImages }
+    }
+    case 'openUploadImagesModal':
+      return { ...state, isUploadImagesModalOpen: true, isCropImageModalOpen: false }
+    case 'closeUploadImagesModal':
+      return { ...state, isUploadImagesModalOpen: false }
+    case 'openCropImageModal':
+      return {
+        ...state,
+        isUploadImagesModalOpen: false,
+        isCropImageModalOpen: true,
+        activeIndex: action.payload.index,
+      }
+    case 'closeCropImageModal':
+      return { ...state, isUploadImagesModalOpen: true, isCropImageModalOpen: false }
     default:
       return state
   }
@@ -131,14 +173,17 @@ export interface ProfileImageState {
   file?: File
   src?: string
   error?: string
+  crop?: Crop
+  transformations?: ImageTransformations
 }
 
 type ProfileImageAction =
   | { type: 'validate' }
   | { type: 'beginUpload' }
   | { type: 'uploadProgress'; payload: number }
-  | { type: 'completeUpload'; payload: string }
+  | { type: 'completeUpload' }
   | { type: 'error'; payload: string }
+  | { type: 'crop'; payload: { crop: Crop; transformations: ImageTransformations } }
 
 export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction> = (
   state,
@@ -167,9 +212,20 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
     case 'uploadProgress':
       return { ...state, status: 'uploading', progress: action.payload }
     case 'completeUpload':
-      return { ...state, status: 'uploaded', progress: 100, src: action.payload }
+      return {
+        ...state,
+        status: 'uploaded',
+        progress: 100,
+        src: `${R2_BASE_URL}/${state.name}`,
+      }
     case 'error':
       return { ...state, status: 'error', error: action.payload }
+    case 'crop':
+      return {
+        ...state,
+        crop: action.payload.crop,
+        transformations: action.payload.transformations,
+      }
     default:
       return state
   }

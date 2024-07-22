@@ -2,40 +2,44 @@ import { fn } from '@storybook/test'
 import { useCallback, useEffect, useRef } from 'react'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { Button } from '../Button/Button'
-import { UploadImagesModal } from './UploadImagesModal'
+import { CropImageModal } from './CropImageModal'
 import type { Meta, StoryObj } from '@storybook/react'
 
 const meta = {
-  title: 'Components/UploadImagesModal',
-  component: UploadImagesModal,
+  title: 'Components/CropImageModal',
+  component: CropImageModal,
   args: {
-    onCropClick: fn(),
     onClose: fn(),
   },
-} satisfies Meta<typeof UploadImagesModal>
+} satisfies Meta<typeof CropImageModal>
 
 export default meta
 
-type Story = StoryObj<typeof UploadImagesModal>
+type Story = StoryObj<typeof CropImageModal>
 
 export const Default: Story = {
   render: (...[args]) => {
-    const ref = useRef<HTMLDialogElement>(null)
     const { dispatch } = useProfileImages()
+    const ref = useRef<HTMLDialogElement>(null)
 
     const openModal = useCallback(() => {
+      dispatch({ type: 'openCropImageModal', payload: { index: 0 } })
       ref.current?.showModal()
-      dispatch({ type: 'openUploadImagesModal' })
     }, [dispatch])
 
     useEffect(() => {
       openModal()
-    }, [openModal])
+      dispatch({ type: 'addFile', payload: new File([''], 'image.jpg', { type: 'image/jpeg' }) })
+      dispatch({
+        type: 'completeUpload',
+        payload: { index: 0 },
+      })
+    }, [dispatch, openModal])
 
     return (
       <>
         <Button onClick={openModal}>Open modal</Button>
-        <UploadImagesModal ref={ref} {...args} />
+        <CropImageModal ref={ref} {...args} />
       </>
     )
   },
