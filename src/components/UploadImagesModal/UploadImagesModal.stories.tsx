@@ -1,5 +1,6 @@
 import { fn } from '@storybook/test'
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
+import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { Button } from '../Button/Button'
 import { UploadImagesModal } from './UploadImagesModal'
 import type { Meta, StoryObj } from '@storybook/react'
@@ -7,7 +8,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 const meta = {
   title: 'Components/UploadImagesModal',
   component: UploadImagesModal,
-  tags: ['autodocs'],
   args: {
     onCropClick: fn(),
     onClose: fn(),
@@ -19,10 +19,18 @@ export default meta
 type Story = StoryObj<typeof UploadImagesModal>
 
 export const Default: Story = {
-  render: (args) => {
+  render: (...[args]) => {
     const ref = useRef<HTMLDialogElement>(null)
+    const { dispatch } = useProfileImages()
 
-    const openModal = () => ref.current?.showModal()
+    const openModal = useCallback(() => {
+      ref.current?.showModal()
+      dispatch({ type: 'openUploadImagesModal' })
+    }, [dispatch])
+
+    useEffect(() => {
+      openModal()
+    }, [openModal])
 
     return (
       <>
