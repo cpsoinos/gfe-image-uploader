@@ -1,3 +1,5 @@
+'use client'
+
 import mergeRefs from 'merge-refs'
 import { forwardRef, useRef, type DialogHTMLAttributes, type PropsWithChildren } from 'react'
 import { twMerge } from 'tailwind-merge'

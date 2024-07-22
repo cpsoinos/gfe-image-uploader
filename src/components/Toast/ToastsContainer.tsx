@@ -1,3 +1,5 @@
+'use client'
+
 import { useToasts } from '@/contexts/ToastsContext'
 import { Toast } from './Toast'
 import type { FC } from 'react'

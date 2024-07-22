@@ -1,3 +1,5 @@
+'use client'
+
 import './ProfileCard.styles.css'
 import Image from 'next/image'
 import { forwardRef, useMemo, useRef, type HTMLAttributes } from 'react'
