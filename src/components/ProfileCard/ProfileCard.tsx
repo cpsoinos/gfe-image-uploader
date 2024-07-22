@@ -59,7 +59,10 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
           <div className="z-10 flex items-end justify-between">
             <Image
               src={selectedImage?.src || '/avatar-empty.svg'}
-              loader={cloudflareLoaderWithTransformations(transformationsString)}
+              loader={
+                selectedImage?.transformations &&
+                cloudflareLoaderWithTransformations(transformationsString)
+              }
               width={160}
               height={160}
               alt="avatar"
