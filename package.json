@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "pnpx @cloudflare/next-on-pages",
+    "build": "next build",
     "build-storybook": "storybook build",
+    "build:next-on-pages": "npx @cloudflare/next-on-pages",
     "dev": "op run --env-file=\".env.local\" -- next dev",
     "format": "prettier --write .",
     "lint": "oxlint && next lint",
     "lint:fix": "oxlint --fix . && next lint --fix",
     "prepare": "husky",
-    "preview": "pnpm wrangler pages dev .vercel/output/static",
+    "preview": "pnpm wrangler pages dev .vercel/output/static --compatibility-flag nodejs_compat",
     "start": "next start",
     "storybook": "storybook dev -p 6006",
     "wrangler": "op plugin run -- wrangler"
