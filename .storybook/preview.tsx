@@ -3,6 +3,10 @@ import '../src/app/globals.css'
 import { INITIAL_VIEWPORTS, MINIMAL_VIEWPORTS } from '@storybook/addon-viewport'
 import React from 'react'
 import { ProfileImagesProvider } from '../src/contexts/ProfileImagesContext'
+import { initialize, mswLoader } from 'msw-storybook-addon'
+
+// Initialize MSW
+initialize()
 
 const preview: Preview = {
   decorators: [
@@ -28,6 +32,8 @@ const preview: Preview = {
       },
     },
   },
+  // Provide the MSW addon loader globally
+  loaders: [mswLoader],
 }
 
 export default preview

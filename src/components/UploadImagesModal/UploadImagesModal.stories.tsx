@@ -1,3 +1,4 @@
+import { fn } from '@storybook/test'
 import { useRef } from 'react'
 import { Button } from '../Button/Button'
 import { UploadImagesModal } from './UploadImagesModal'
@@ -7,6 +8,10 @@ const meta = {
   title: 'Components/UploadImagesModal',
   component: UploadImagesModal,
   tags: ['autodocs'],
+  args: {
+    onCropClick: fn(),
+    onClose: fn(),
+  },
 } satisfies Meta<typeof UploadImagesModal>
 
 export default meta
@@ -14,7 +19,7 @@ export default meta
 type Story = StoryObj<typeof UploadImagesModal>
 
 export const Default: Story = {
-  render: () => {
+  render: (args) => {
     const ref = useRef<HTMLDialogElement>(null)
 
     const openModal = () => ref.current?.showModal()
@@ -22,7 +27,7 @@ export const Default: Story = {
     return (
       <>
         <Button onClick={openModal}>Open modal</Button>
-        <UploadImagesModal ref={ref} />
+        <UploadImagesModal ref={ref} {...args} />
       </>
     )
   },
