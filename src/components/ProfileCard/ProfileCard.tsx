@@ -70,6 +70,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
               height={160}
               alt="avatar"
               className="size-24 rounded-full border-[3.6px] border-white bg-white object-cover md:size-40 md:border-6"
+              priority
             />
             <Button variant="secondary" onClick={openUploadImagesModal}>
               Update picture
