@@ -5,7 +5,11 @@ export const getPresignedUploadUrl = async (file: File) => {
   url.searchParams.append('contentType', contentType)
 
   const response = await fetch(url, { method: 'PUT' })
-  const signedUrl = await response.text()
 
-  return signedUrl
+  if (response.ok) {
+    const signedUrl = await response.text()
+    return signedUrl
+  } else {
+    throw new Error('Server error when attempting to generate presigned URL')
+  }
 }
