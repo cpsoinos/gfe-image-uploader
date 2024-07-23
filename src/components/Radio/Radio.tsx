@@ -1,5 +1,5 @@
-import { forwardRef, type InputHTMLAttributes } from 'react'
 import './Radio.styles.css'
+import { forwardRef, type InputHTMLAttributes } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 type RadioProps = InputHTMLAttributes<HTMLInputElement>
