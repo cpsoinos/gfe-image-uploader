@@ -7,7 +7,7 @@ compatibility_flags = [
 pages_build_output_dir = "./.vercel/output/static"
 
 [build]
-command = "npx @cloudflare/next-on-pages@1"
+command = "pnpm dlx @cloudflare/next-on-pages@1"
 
 [[r2_buckets]]
 binding = "R2_BUCKET"
