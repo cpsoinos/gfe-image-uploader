@@ -102,7 +102,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
     }, [profileImages, uploadFile])
 
     const onSave = () => {
-      if (!selectedIndex) return
+      if (selectedIndex === undefined) return
       dispatch({ type: 'selectImage', payload: selectedIndex })
       modalRef.current?.close()
       addToast({ type: 'success', message: 'Changes saved successfully' })
