@@ -1,13 +1,9 @@
 name = "gfe-image-uploader"
-node_compat = true
 compatibility_date = "2024-07-23"
 compatibility_flags = [
   "nodejs_compat",
 ]
 pages_build_output_dir = "./.vercel/output/static"
-
-[build]
-command = "pnpm dlx @cloudflare/next-on-pages@1"
 
 [[r2_buckets]]
 binding = "R2_BUCKET"
@@ -16,3 +12,5 @@ bucket_name = "gfe-image-uploader"
 [vars]
 CF_ACCOUNT_ID = '62dd6e6f44a50c62d4ad76a0122f5a3c'
 R2_BUCKET_NAME = "gfe-image-uploader"
+NEXT_PUBLIC_R2_BASE_URL = "https://gfe-image-uploader-r2.anderapps.com"
+NEXT_PUBLIC_TRANSFORM_BASE_URL = "https://portfolio.anderapps.com/cdn-cgi/image"
