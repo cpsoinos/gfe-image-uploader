@@ -16,6 +16,7 @@ import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
 
 export interface ImageRowProps extends ProfileImageState {
   selected?: boolean
+  onCancelUpload: () => void
   onSelect: () => void
   onDelete: () => void
   onCropClick: () => void
@@ -31,6 +32,7 @@ export const ImageRow: FC<ImageRowProps> = ({
   error,
   selected,
   transformations,
+  onCancelUpload,
   onSelect,
   onDelete,
   onCropClick,
@@ -79,13 +81,13 @@ export const ImageRow: FC<ImageRowProps> = ({
         <div className="flex flex-col gap-1">
           <div className="flex">
             <p className="grow font-semibold">{name}</p>
-            {error ? (
-              <Button variant="icon" className="size-5" onClick={onDelete}>
-                <CloseIcon className="size-4 text-neutral-600" />
-                <span className="sr-only">Delete</span>
-              </Button>
-            ) : (
+            {status === 'uploaded' ? (
               <Radio checked={selected} name="selectedImage" onChange={onRadioChanged} />
+            ) : (
+              <Button variant="icon" className="size-5" onClick={onCancelUpload}>
+                <CloseIcon className="size-4 text-neutral-600" />
+                <span className="sr-only">Cancel upload</span>
+              </Button>
             )}
           </div>
           <p className="text-xs text-neutral-600">{formatFileSize(size)}</p>

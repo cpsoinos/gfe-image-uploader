@@ -40,6 +40,12 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
       dispatch({ type: 'removeFile', payload: index })
     }
 
+    const handleCancelUpload = async (index: number) => {
+      const xhr = profileImages[index].xhr
+      xhr?.abort()
+      dispatch({ type: 'removeFile', payload: index })
+    }
+
     const onSelected = (index: number) => {
       setSelectedIndex(index)
     }
@@ -87,7 +93,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
           })
         }
 
-        dispatch({ type: 'uploadStart', payload: { index } })
+        dispatch({ type: 'uploadStart', payload: { index, xhr } })
         xhr.send(file)
       },
       [dispatch],
@@ -126,6 +132,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
               key={image.name}
               {...image}
               selected={selectedIndex === i}
+              onCancelUpload={() => handleCancelUpload(i)}
               onSelect={() => onSelected(i)}
               onDelete={() => handleDelete(i)}
               onCropClick={() => onCropClick(i)}

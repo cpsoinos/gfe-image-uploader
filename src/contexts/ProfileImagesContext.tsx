@@ -64,7 +64,7 @@ export type ProfileImagesState = {
 
 type ProfileImagesAction =
   | { type: 'addFile'; payload: File }
-  | { type: 'uploadStart'; payload: { index: number } }
+  | { type: 'uploadStart'; payload: { index: number; xhr: XMLHttpRequest } }
   | { type: 'uploadProgress'; payload: { index: number; progress: number } }
   | { type: 'uploadError'; payload: { index: number; error: string } }
   | { type: 'uploadSuccess'; payload: { index: number } }
@@ -107,6 +107,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
         newProfileImages[action.payload.index],
         {
           type: 'uploadStart',
+          payload: { xhr: action.payload.xhr },
         },
       )
       return { ...state, profileImages: newProfileImages }
@@ -192,6 +193,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
 
 export interface ProfileImageState {
   status: 'pending' | 'uploading' | 'uploadComplete' | 'uploaded' | 'error'
+  xhr?: XMLHttpRequest
   progress?: number
   name: string
   size: number
@@ -204,7 +206,7 @@ export interface ProfileImageState {
 
 type ProfileImageAction =
   | { type: 'validate' }
-  | { type: 'uploadStart' }
+  | { type: 'uploadStart'; payload: { xhr: XMLHttpRequest } }
   | { type: 'uploadProgress'; payload: number }
   | { type: 'uploadError'; payload: string }
   | { type: 'uploadSuccess' }
@@ -235,7 +237,7 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
       }
     }
     case 'uploadStart':
-      return { ...state, status: 'uploading', progress: 0 }
+      return { ...state, status: 'uploading', progress: 0, xhr: action.payload.xhr }
     case 'uploadProgress':
       return { ...state, status: 'uploading', progress: action.payload }
     case 'uploadError':
@@ -246,6 +248,7 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
         status: 'uploadComplete',
         progress: 100,
         src: `${R2_BASE_URL}/${state.name}`,
+        xhr: undefined,
       }
     case 'uploadComplete':
       return {
