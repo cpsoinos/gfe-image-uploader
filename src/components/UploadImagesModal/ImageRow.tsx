@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { useMemo, type ChangeEventHandler, type FC } from 'react'
+import { twJoin } from 'tailwind-merge'
 import CheckIcon from '@/icons/check-line.svg'
 import CloseIcon from '@/icons/close.svg'
 import CropIcon from '@/icons/crop-line.svg'
@@ -58,7 +59,10 @@ export const ImageRow: FC<ImageRowProps> = ({
     <div className="flex items-center gap-4">
       {thumbnail ? (
         <Image
-          className="size-20 flex-none rounded-md object-cover"
+          className={twJoin(
+            'size-20 flex-none rounded-md object-cover',
+            ['pending', 'uploading'].includes(status) && 'brightness-[80%]',
+          )}
           src={thumbnail}
           loader={transformations && cloudflareLoaderWithTransformations(transformationsString)}
           onLoad={() => URL.revokeObjectURL(thumbnail)}
