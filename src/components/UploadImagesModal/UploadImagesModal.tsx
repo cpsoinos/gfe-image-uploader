@@ -34,7 +34,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
 
     const handleDelete = async (index: number) => {
       const key = profileImages[index].name
-      await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/images/${key}`, {
+      await fetch(`/api/images/${key}`, {
         method: 'DELETE',
       })
       dispatch({ type: 'removeFile', payload: index })

@@ -12,13 +12,13 @@ const meta = {
     msw: {
       handlers: [
         [
-          http.put(`${process.env.NEXT_PUBLIC_HOST}/api/images/:key`, () => {
+          http.put(`/api/images/:key`, () => {
             return HttpResponse.text('/mock-direct-upload')
           }),
           http.put('/mock-direct-upload', () => {
             return new HttpResponse()
           }),
-          http.delete(`${process.env.NEXT_PUBLIC_HOST}/api/images/:key`, () => {
+          http.delete(`/api/images/:key`, () => {
             return new HttpResponse()
           }),
         ],
