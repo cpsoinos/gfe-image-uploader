@@ -7,7 +7,7 @@ export const runtime = 'edge'
 
 export const metadata: Metadata = {
   title: 'Image Uploader',
-  description: 'A GreatFrontEnd Project submission by Corey Psoinos',
+  description: 'A challenge by GreatFrontEnd Projects. Built by Corey Psoinos.',
 }
 
 export default function RootLayout({
