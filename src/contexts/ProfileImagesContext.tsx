@@ -47,6 +47,7 @@ export type ProfileImagesState = {
   error?: string
   selectedIndex: number
   activeIndex?: number
+  isCroppingPendingSelection?: boolean
 } & (
   | {
       isUploadImagesModalOpen: false
@@ -74,7 +75,7 @@ type ProfileImagesAction =
   | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
   | { type: 'openUploadImagesModal' }
   | { type: 'closeUploadImagesModal' }
-  | { type: 'openCropImageModal'; payload: { index: number } }
+  | { type: 'openCropImageModal'; payload: { index: number; isSelectionPending?: boolean } }
   | { type: 'closeCropImageModal' }
 
 export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesAction> = (
@@ -180,12 +181,18 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
     case 'openCropImageModal':
       return {
         ...state,
+        activeIndex: action.payload.index,
         isUploadImagesModalOpen: false,
         isCropImageModalOpen: true,
-        activeIndex: action.payload.index,
+        isCroppingPendingSelection: action.payload.isSelectionPending,
       }
     case 'closeCropImageModal':
-      return { ...state, isUploadImagesModalOpen: true, isCropImageModalOpen: false }
+      return {
+        ...state,
+        activeIndex: undefined,
+        isCropImageModalOpen: false,
+        isUploadImagesModalOpen: !state.isCroppingPendingSelection,
+      }
     default:
       return state
   }

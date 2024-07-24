@@ -3,7 +3,6 @@
 import mergeRefs from 'merge-refs'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
-import { useToasts } from '@/contexts/ToastsContext'
 import { getPresignedUploadUrl } from '@/lib/getPresignedUploadUrl'
 import { Button } from '../Button/Button'
 import { Dropzone } from '../Dropzone/Dropzone'
@@ -14,15 +13,14 @@ const SUCCESS_MESSAGE_TIMEOUT = 350
 
 export interface UploadImagesModalProps {
   onClose: () => void
-  onCropClick: (index: number) => void
+  onCropClick: (index: number, isCropOnSelect?: boolean) => void
 }
 
 export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModalProps>(
   ({ onCropClick }, ref) => {
     const modalRef = useRef<HTMLDialogElement>(null)
-    const [selectedIndex, setSelectedIndex] = useState<number | undefined>()
+    const [selectedIndex, setSelectedIndex] = useState<number>(-1)
     const { state, dispatch } = useProfileImages()
-    const { addToast } = useToasts()
 
     const { profileImages, error } = state
 
@@ -37,6 +35,9 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
       await fetch(`/api/images/${key}`, {
         method: 'DELETE',
       })
+      if (selectedIndex === index) {
+        setSelectedIndex((prev) => prev - 1)
+      }
       dispatch({ type: 'removeFile', payload: index })
     }
 
@@ -109,9 +110,8 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
 
     const onSave = () => {
       if (selectedIndex === undefined) return
-      dispatch({ type: 'selectImage', payload: selectedIndex })
+      onCropClick(selectedIndex, true)
       modalRef.current?.close()
-      addToast({ type: 'success', message: 'Changes saved successfully' })
     }
 
     return (
@@ -144,7 +144,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
           <Button variant="secondary" className="w-full" onClick={() => modalRef.current?.close()}>
             Cancel
           </Button>
-          <Button onClick={onSave} className="w-full" disabled={selectedIndex === undefined}>
+          <Button onClick={onSave} className="w-full" disabled={selectedIndex === -1}>
             Select image
           </Button>
         </div>

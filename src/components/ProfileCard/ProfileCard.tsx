@@ -4,6 +4,7 @@ import './ProfileCard.styles.css'
 import Image from 'next/image'
 import { forwardRef, useMemo, useRef, type HTMLAttributes } from 'react'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
+import { useToasts } from '@/contexts/ToastsContext'
 import { buildTransformParams } from '@/lib/images/buildTransformParams'
 import { cloudflareLoaderWithTransformations } from '@/lib/images/cloudflareImageLoader'
 import { Button } from '../Button/Button'
@@ -26,8 +27,10 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
   ({ name, handle, workplace, pronouns, location, ...props }, ref) => {
     const uploadImagesModalRef = useRef<HTMLDialogElement>(null)
     const cropImageModalRef = useRef<HTMLDialogElement>(null)
-
+    // const [isSelectingAndCropping, setIsSelectingAndCropping] = useState(false)
+    const { addToast } = useToasts()
     const { state, dispatch } = useProfileImages()
+
     const selectedImage = state.profileImages[state.selectedIndex]
 
     const openUploadImagesModal = () => {
@@ -35,15 +38,23 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
       dispatch({ type: 'openUploadImagesModal' })
     }
 
-    const openCropImageModal = (index: number) => {
-      dispatch({ type: 'openCropImageModal', payload: { index } })
+    const openCropImageModal = (index: number, isCropOnSelect?: boolean) => {
+      dispatch({
+        type: 'openCropImageModal',
+        payload: { index, isSelectionPending: isCropOnSelect },
+      })
       uploadImagesModalRef.current?.close()
       cropImageModalRef.current?.showModal()
     }
 
     const onCropImageModalClose = () => {
+      if (state.isCroppingPendingSelection) {
+        dispatch({ type: 'selectImage', payload: state.activeIndex! })
+        addToast({ type: 'success', message: 'Changes saved successfully' })
+      } else {
+        uploadImagesModalRef.current?.showModal()
+      }
       dispatch({ type: 'closeCropImageModal' })
-      uploadImagesModalRef.current?.showModal()
     }
 
     const transformationsString = useMemo(() => {
