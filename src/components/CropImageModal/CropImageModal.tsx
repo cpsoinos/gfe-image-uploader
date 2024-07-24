@@ -40,7 +40,6 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
         height: (crop.height * originalImageDimensions.height) / 100,
       }
       dispatch({ type: 'crop', payload: { index: activeIndex, crop, transformations } })
-      modalRef.current?.close()
     }, [activeIndex, crop, dispatch, originalImageDimensions])
 
     return (
@@ -51,7 +50,7 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
         onClose={onClose}
       >
         {src && (
-          <div className="flex flex-col gap-8">
+          <form className="flex flex-col gap-8" method="dialog">
             <div className="flex h-[18.125rem] w-[18.4375rem] justify-center bg-neutral-950">
               <ImageCropper
                 src={src}
@@ -64,19 +63,14 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
             </div>
 
             <div className="flex justify-between gap-3">
-              <Button
-                variant="secondary"
-                onClick={() => modalRef.current?.close()}
-                className="w-full"
-                size="md"
-              >
+              <Button variant="secondary" className="w-full" size="md">
                 Cancel
               </Button>
               <Button className="w-full" size="md" onClick={onSave}>
                 Confirm
               </Button>
             </div>
-          </div>
+          </form>
         )}
       </Modal>
     )
