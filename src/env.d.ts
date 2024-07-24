@@ -6,4 +6,6 @@ interface CloudflareEnv {
   R2_BUCKET_NAME: string
   NEXT_PUBLIC_R2_BASE_URL: string
   NEXT_PUBLIC_TRANSFORM_BASE_URL: string
+  NEXT_PUBLIC_POSTHOG_KEY: string
+  NEXT_PUBLIC_POSTHOG_HOST: string
 }
