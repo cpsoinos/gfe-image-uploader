@@ -10,7 +10,6 @@ const meta = {
   component: UploadImagesModal,
   args: {
     onCropClick: fn(),
-    onClose: fn(),
   },
 } satisfies Meta<typeof UploadImagesModal>
 
