@@ -84,7 +84,8 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
 ) => {
   switch (action.type) {
     case 'addFile': {
-      if (state.profileImages.length >= MAX_NUMBER_OF_FILES) {
+      const nonErroredImages = state.profileImages.filter((image) => image.status !== 'error')
+      if (nonErroredImages.length >= MAX_NUMBER_OF_FILES) {
         return { ...state, error: "You've reached the image limit" }
       } else {
         const initialImageState: ProfileImageState = {
