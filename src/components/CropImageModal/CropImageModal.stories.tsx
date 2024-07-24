@@ -31,9 +31,10 @@ export const Default: Story = {
       openModal()
       dispatch({ type: 'addFile', payload: new File([''], 'image.jpg', { type: 'image/jpeg' }) })
       dispatch({
-        type: 'uploadComplete',
+        type: 'uploadSuccess',
         payload: { index: 0 },
       })
+      dispatch({ type: 'uploadComplete', payload: { index: 0 } })
     }, [dispatch, openModal])
 
     return (
