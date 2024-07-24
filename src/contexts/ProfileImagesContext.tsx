@@ -176,8 +176,17 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
     }
     case 'openUploadImagesModal':
       return { ...state, isUploadImagesModalOpen: true, isCropImageModalOpen: false }
-    case 'closeUploadImagesModal':
-      return { ...state, isUploadImagesModalOpen: false }
+    case 'closeUploadImagesModal': {
+      const selectedImage = state.profileImages[state.selectedIndex]
+      const newProfileImages = state.profileImages.filter((image) => image.status !== 'error')
+      const newSelectedIndex = newProfileImages.indexOf(selectedImage)
+      return {
+        ...state,
+        profileImages: newProfileImages,
+        selectedIndex: newSelectedIndex,
+        isUploadImagesModalOpen: false,
+      }
+    }
     case 'openCropImageModal':
       return {
         ...state,

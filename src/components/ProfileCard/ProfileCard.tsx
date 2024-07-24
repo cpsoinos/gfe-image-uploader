@@ -27,7 +27,6 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
   ({ name, handle, workplace, pronouns, location, ...props }, ref) => {
     const uploadImagesModalRef = useRef<HTMLDialogElement>(null)
     const cropImageModalRef = useRef<HTMLDialogElement>(null)
-    // const [isSelectingAndCropping, setIsSelectingAndCropping] = useState(false)
     const { addToast } = useToasts()
     const { state, dispatch } = useProfileImages()
 
@@ -51,10 +50,11 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
       if (state.isCroppingPendingSelection) {
         dispatch({ type: 'selectImage', payload: state.activeIndex! })
         addToast({ type: 'success', message: 'Changes saved successfully' })
+        dispatch({ type: 'closeUploadImagesModal' })
       } else {
         uploadImagesModalRef.current?.showModal()
+        dispatch({ type: 'closeCropImageModal' })
       }
-      dispatch({ type: 'closeCropImageModal' })
     }
 
     const transformationsString = useMemo(() => {
@@ -99,11 +99,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
           </ProfileDetails>
         </div>
 
-        <UploadImagesModal
-          ref={uploadImagesModalRef}
-          onCropClick={openCropImageModal}
-          onClose={() => dispatch({ type: 'closeUploadImagesModal' })}
-        />
+        <UploadImagesModal ref={uploadImagesModalRef} onCropClick={openCropImageModal} />
         <CropImageModal ref={cropImageModalRef} onClose={onCropImageModalClose} />
       </>
     )

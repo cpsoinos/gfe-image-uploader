@@ -12,7 +12,7 @@ import { ImageRow } from './ImageRow'
 const SUCCESS_MESSAGE_TIMEOUT = 350
 
 export interface UploadImagesModalProps {
-  onClose: () => void
+  // onClose: () => void
   onCropClick: (index: number, isCropOnSelect?: boolean) => void
 }
 
@@ -109,8 +109,13 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
     }, [profileImages, uploadFile])
 
     const onSave = () => {
-      if (selectedIndex === undefined) return
+      if (selectedIndex === -1) return
       onCropClick(selectedIndex, true)
+      modalRef.current?.close()
+    }
+
+    const onCancel = () => {
+      dispatch({ type: 'closeUploadImagesModal' })
       modalRef.current?.close()
     }
 
@@ -141,7 +146,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
         </div>
 
         <div className="flex justify-between gap-4">
-          <Button variant="secondary" className="w-full" onClick={() => modalRef.current?.close()}>
+          <Button variant="secondary" className="w-full" onClick={onCancel}>
             Cancel
           </Button>
           <Button onClick={onSave} className="w-full" disabled={selectedIndex === -1}>
