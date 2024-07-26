@@ -9,6 +9,14 @@ pages_build_output_dir = "./.vercel/output/static"
 binding = "R2_BUCKET"
 bucket_name = "gfe-image-uploader"
 
+[[d1_databases]]
+binding = "DB"                                       # i.e. available in your Worker on env.DB
+database_name = "gfe-image-uploader"
+database_id = "d85edfaa-8b4b-4bac-b1e5-fe391f03db94"
+preview_database_id = "DB"                           # Required for Pages local development
+migrations_dir = "drizzle"
+migrations_table = "__drizzle_migrations"
+
 [vars]
 CF_ACCOUNT_ID = "62dd6e6f44a50c62d4ad76a0122f5a3c"
 R2_BUCKET_NAME = "gfe-image-uploader"
