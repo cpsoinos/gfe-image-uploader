@@ -7,10 +7,11 @@ import {
   useReducer,
   type Dispatch,
   type FC,
-  type ReactNode,
+  type PropsWithChildren,
   type Reducer,
 } from 'react'
 import { MAX_FILE_SIZE_BYTES, MAX_NUMBER_OF_FILES, R2_BASE_URL } from '@/lib/images/constants'
+import type { ProfileImage } from '@/db/schema'
 import type { ImageTransformations } from '@/types'
 import type { Crop } from 'react-image-crop'
 
@@ -21,9 +22,30 @@ export interface ProfileImagesContextValue {
 
 export const ProfileImagesContext = createContext<ProfileImagesContextValue | undefined>(undefined)
 
-export const ProfileImagesProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export type ProfileImagesProviderProps = PropsWithChildren<{
+  pathPrefix: string
+  storedImages: ProfileImage[]
+}>
+
+export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
+  pathPrefix,
+  storedImages,
+  children,
+}) => {
+  const profileImages = storedImages.map((image) => {
+    const profileImageState: ProfileImageState = {
+      pathPrefix,
+      status: 'uploaded',
+      name: image.name,
+      size: image.size,
+      src: `${R2_BASE_URL}/${pathPrefix}/${image.name}`,
+    }
+    return profileImageReducer(profileImageState, { type: 'validate' })
+  })
+
   const [state, dispatch] = useReducer(profileImagesReducer, {
-    profileImages: [],
+    pathPrefix,
+    profileImages,
     selectedIndex: -1,
     isUploadImagesModalOpen: false,
     isCropImageModalOpen: false,
@@ -43,6 +65,7 @@ export const useProfileImages = () => {
 }
 
 export type ProfileImagesState = {
+  pathPrefix: string
   profileImages: ProfileImageState[]
   error?: string
   selectedIndex: number
@@ -89,6 +112,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
         return { ...state, error: "You've reached the image limit" }
       } else {
         const initialImageState: ProfileImageState = {
+          pathPrefix: state.pathPrefix,
           status: 'pending',
           name: action.payload.name,
           size: action.payload.size,
@@ -213,6 +237,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
 }
 
 export interface ProfileImageState {
+  pathPrefix: string
   status: 'pending' | 'uploading' | 'uploadComplete' | 'uploaded' | 'error'
   xhr?: XMLHttpRequest
   progress?: number

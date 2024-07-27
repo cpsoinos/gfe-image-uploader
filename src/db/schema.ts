@@ -1,7 +1,8 @@
 import { integer, sqliteTable, text, primaryKey, uniqueIndex } from 'drizzle-orm/sqlite-core'
 import { id, timestamps } from './utils/common'
-import type { WorkplaceInfo, LocationInfo } from '@/types'
+import type { WorkplaceInfo, LocationInfo, ImageTransformations } from '@/types'
 import type { AdapterAccountType } from 'next-auth/adapters'
+import type { Crop } from 'react-image-crop'
 
 export const users = sqliteTable(
   'user',
@@ -96,3 +97,19 @@ export const authenticators = sqliteTable(
     }),
   }),
 )
+
+export const profileImages = sqliteTable('profileImage', {
+  id,
+  ...timestamps,
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  size: integer('size', { mode: 'number' }).notNull(),
+  format: text('format', { enum: ['JPEG', 'PNG'] }).notNull(),
+  crop: text('crop', { mode: 'json' }).$type<Crop>(),
+  transformations: text('transformations', { mode: 'json' }).$type<ImageTransformations>(),
+})
+
+export type ProfileImage = typeof profileImages.$inferSelect // return type when queried
+export type InsertProfileImage = typeof profileImages.$inferInsert // insert type
