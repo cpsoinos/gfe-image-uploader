@@ -1,3 +1,4 @@
+import { auth } from '@/auth'
 import { ProfileCard } from '@/components/ProfileCard/ProfileCard'
 import { ToastsContainer } from '@/components/Toast/ToastsContainer'
 import { ProfileImagesProvider } from '@/contexts/ProfileImagesContext'
@@ -5,19 +6,21 @@ import { ToastsProvider } from '@/contexts/ToastsContext'
 
 export const runtime = 'edge'
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth()
+
   const user = {
-    name: 'Jack Smith',
-    handle: '@kingjack',
-    workplace: {
+    name: session?.user?.name ?? 'Jack Smith',
+    handle: session?.user?.handle ?? '@kingjack',
+    workplace: session?.user?.workplace ?? {
       title: 'Senior Product Designer',
       companyName: 'Webflow',
     },
-    location: {
+    location: session?.user?.location ?? {
       city: 'Vancouver',
       countryCode: 'CA',
     },
-    pronouns: 'He/Him',
+    pronouns: session?.user?.pronouns ?? 'He/Him',
   }
 
   return (
