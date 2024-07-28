@@ -1,6 +1,7 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { getRequestContext } from '@cloudflare/next-on-pages'
+import { auth } from '@/auth'
 import type { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
@@ -13,6 +14,9 @@ type Params = {
  * Get a signed URL for uploading an object to the R2 bucket
  */
 export async function PUT(request: NextRequest, context: { params: Params }) {
+  const session = await auth()
+  if (!session?.user) return new Response(null, { status: 401 })
+
   const { env } = getRequestContext()
   const searchParams = request.nextUrl.searchParams
   const contentType = searchParams.get('contentType')
@@ -33,7 +37,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     R2,
     new PutObjectCommand({
       Bucket: env.R2_BUCKET_NAME,
-      Key: context.params.key,
+      Key: `${session?.user.id}/${context.params.key}`,
       ContentType: contentType,
     }),
     {
@@ -42,20 +46,4 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
   )
 
   return new Response(signedUrl, { status: 200 })
-}
-
-/**
- * Delete an object from the R2 bucket
- *
- * @note
- * When running locally, this will not delete the object from the remote R2 bucket.
- * Instead, it will attempt to delete the object from the local R2 bucket storage emulator created by wrangler.
- */
-export async function DELETE(_request: NextRequest, context: { params: Params }) {
-  const { env } = getRequestContext()
-  const R2 = env.R2_BUCKET
-  const key = context.params.key
-  await R2.delete(key)
-
-  return new Response(null, { status: 204 })
 }

@@ -1,4 +1,5 @@
 interface CloudflareEnv {
+  DB: D1Database
   R2_BUCKET: R2Bucket
   R2_ACCESS_KEY_ID: string
   R2_SECRET_ACCESS_KEY: string

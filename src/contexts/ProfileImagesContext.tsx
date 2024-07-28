@@ -7,10 +7,11 @@ import {
   useReducer,
   type Dispatch,
   type FC,
-  type ReactNode,
+  type PropsWithChildren,
   type Reducer,
 } from 'react'
 import { MAX_FILE_SIZE_BYTES, MAX_NUMBER_OF_FILES, R2_BASE_URL } from '@/lib/images/constants'
+import type { ProfileImage } from '@/db/schema'
 import type { ImageTransformations } from '@/types'
 import type { Crop } from 'react-image-crop'
 
@@ -21,9 +22,30 @@ export interface ProfileImagesContextValue {
 
 export const ProfileImagesContext = createContext<ProfileImagesContextValue | undefined>(undefined)
 
-export const ProfileImagesProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export type ProfileImagesProviderProps = PropsWithChildren<{
+  pathPrefix: string
+  storedImages: ProfileImage[]
+}>
+
+export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
+  pathPrefix,
+  storedImages,
+  children,
+}) => {
+  const profileImages = storedImages.map((image) => {
+    const profileImageState: ProfileImageState = {
+      pathPrefix,
+      status: 'uploaded',
+      name: image.name,
+      size: image.size,
+      src: `${R2_BASE_URL}/${pathPrefix}/${image.name}`,
+    }
+    return profileImageState
+  })
+
   const [state, dispatch] = useReducer(profileImagesReducer, {
-    profileImages: [],
+    pathPrefix,
+    profileImages,
     selectedIndex: -1,
     isUploadImagesModalOpen: false,
     isCropImageModalOpen: false,
@@ -43,6 +65,7 @@ export const useProfileImages = () => {
 }
 
 export type ProfileImagesState = {
+  pathPrefix: string
   profileImages: ProfileImageState[]
   error?: string
   selectedIndex: number
@@ -70,6 +93,7 @@ type ProfileImagesAction =
   | { type: 'uploadError'; payload: { index: number; error: string } }
   | { type: 'uploadSuccess'; payload: { index: number } }
   | { type: 'uploadComplete'; payload: { index: number } }
+  | { type: 'setId'; payload: { index: number; id: string } }
   | { type: 'removeFile'; payload: number }
   | { type: 'selectImage'; payload: number }
   | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
@@ -89,6 +113,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
         return { ...state, error: "You've reached the image limit" }
       } else {
         const initialImageState: ProfileImageState = {
+          pathPrefix: state.pathPrefix,
           status: 'pending',
           name: action.payload.name,
           size: action.payload.size,
@@ -156,6 +181,17 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
       )
       return { ...state, profileImages: newProfileImages }
     }
+    case 'setId': {
+      const newProfileImages = [...state.profileImages]
+      newProfileImages[action.payload.index] = profileImageReducer(
+        newProfileImages[action.payload.index],
+        {
+          type: 'setId',
+          payload: action.payload.id,
+        },
+      )
+      return { ...state, profileImages: newProfileImages }
+    }
     case 'removeFile': {
       const index = action.payload
       const newProfileImages = [...state.profileImages]
@@ -213,6 +249,8 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
 }
 
 export interface ProfileImageState {
+  id?: string
+  pathPrefix: string
   status: 'pending' | 'uploading' | 'uploadComplete' | 'uploaded' | 'error'
   xhr?: XMLHttpRequest
   progress?: number
@@ -232,6 +270,7 @@ type ProfileImageAction =
   | { type: 'uploadError'; payload: string }
   | { type: 'uploadSuccess' }
   | { type: 'uploadComplete' }
+  | { type: 'setId'; payload: string }
   | { type: 'error'; payload: string }
   | { type: 'crop'; payload: { crop: Crop; transformations: ImageTransformations } }
 
@@ -276,6 +315,8 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
         ...state,
         status: 'uploaded',
       }
+    case 'setId':
+      return { ...state, id: action.payload }
     case 'error':
       return { ...state, status: 'error', error: action.payload }
     case 'crop':
