@@ -14,21 +14,21 @@ import { ImageRow } from './ImageRow'
 const SUCCESS_MESSAGE_TIMEOUT = 350
 
 export interface UploadImagesModalProps {
-  onCropClick: (index: number, isCropOnSelect?: boolean) => void
+  onCropClick: (id: string, isCropOnSelect?: boolean) => void
 }
 
 export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModalProps>(
   ({ onCropClick }, ref) => {
     const modalRef = useRef<HTMLDialogElement>(null)
-    const [localSelectedIndex, setLocalSelectedIndex] = useState<number>(-1)
+    const [localSelectedId, setLocalSelectedId] = useState<string | undefined>(undefined)
     const { state, dispatch } = useProfileImages()
 
-    const { profileImages, selectedIndex, error } = state
+    const { profileImages, selectedId, error } = state
 
-    // sync localSelectedIndex with selectedIndex
+    // sync localSelectedId with selectedId
     useEffect(() => {
-      setLocalSelectedIndex(selectedIndex)
-    }, [selectedIndex])
+      setLocalSelectedId(selectedId)
+    }, [selectedId])
 
     const helperText = error ? 'Remove one or more to upload more images.' : 'PNG, or JPG (Max 5MB)'
 
@@ -37,12 +37,8 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
     }
 
     const handleDelete = async (index: number) => {
-      const key = profileImages[index].name
       const id = profileImages[index].id
       if (id) await deleteProfileImage(id)
-      if (localSelectedIndex === index) {
-        setLocalSelectedIndex((prev) => prev - 1)
-      }
       dispatch({ type: 'removeFile', payload: index })
     }
 
@@ -52,8 +48,8 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
       dispatch({ type: 'removeFile', payload: index })
     }
 
-    const onSelected = (index: number) => {
-      setLocalSelectedIndex(index)
+    const onSelected = (id: string) => {
+      setLocalSelectedId(id)
     }
 
     const uploadFile = useCallback(
@@ -123,8 +119,8 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
     }, [profileImages, uploadFile])
 
     const onSave = () => {
-      if (localSelectedIndex === -1) return
-      onCropClick(localSelectedIndex, true)
+      if (!localSelectedId) return
+      onCropClick(localSelectedId, true)
       modalRef.current?.close()
     }
 
@@ -150,11 +146,11 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
             <ImageRow
               key={image.name}
               {...image}
-              selected={localSelectedIndex === i}
+              selected={Boolean(localSelectedId && localSelectedId === image.id)}
               onCancelUpload={() => handleCancelUpload(i)}
-              onSelect={() => onSelected(i)}
+              onSelect={() => onSelected(image.id!)}
               onDelete={() => handleDelete(i)}
-              onCropClick={() => onCropClick(i)}
+              onCropClick={() => onCropClick(image.id!)}
             />
           ))}
         </div>
@@ -163,7 +159,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
           <Button variant="secondary" className="w-full" onClick={onCancel}>
             Cancel
           </Button>
-          <Button onClick={onSave} className="w-full" disabled={localSelectedIndex === -1}>
+          <Button onClick={onSave} className="w-full" disabled={!localSelectedId}>
             Select image
           </Button>
         </div>

@@ -40,14 +40,19 @@ export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
       name: image.name,
       size: image.size,
       src: `${R2_BASE_URL}/${pathPrefix}/${image.name}`,
+      selected: image.selected,
+      crop: image.crop ?? undefined,
+      transformations: image.transformations ?? undefined,
     }
     return profileImageState
   })
 
+  const selectedId = profileImages.find((image) => image.selected)?.id
+
   const [state, dispatch] = useReducer(profileImagesReducer, {
     pathPrefix,
     profileImages,
-    selectedIndex: -1,
+    selectedId,
     isUploadImagesModalOpen: false,
     isCropImageModalOpen: false,
   })
@@ -69,8 +74,8 @@ export type ProfileImagesState = {
   pathPrefix: string
   profileImages: ProfileImageState[]
   error?: string
-  selectedIndex: number
-  activeIndex?: number
+  selectedId?: string
+  activeId?: string
   isCroppingPendingSelection?: boolean
 } & (
   | {
@@ -96,11 +101,11 @@ type ProfileImagesAction =
   | { type: 'uploadComplete'; payload: { index: number } }
   | { type: 'setId'; payload: { index: number; id: string } }
   | { type: 'removeFile'; payload: number }
-  | { type: 'selectImage'; payload: number }
-  | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
+  | { type: 'selectImage'; payload: string }
+  | { type: 'crop'; payload: { id: string; crop: Crop; transformations: ImageTransformations } }
   | { type: 'openUploadImagesModal' }
   | { type: 'closeUploadImagesModal' }
-  | { type: 'openCropImageModal'; payload: { index: number; isSelectionPending?: boolean } }
+  | { type: 'openCropImageModal'; payload: { id: string; isSelectionPending?: boolean } }
   | { type: 'closeCropImageModal' }
 
 export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesAction> = (
@@ -119,6 +124,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
           name: action.payload.name,
           size: action.payload.size,
           file: action.payload,
+          selected: false,
         }
         const imageState = profileImageReducer(initialImageState, {
           type: 'validate',
@@ -197,25 +203,30 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
       const index = action.payload
       const newProfileImages = [...state.profileImages]
       newProfileImages.splice(index, 1)
-      const newSelectedIndex =
-        index < state.selectedIndex ? state.selectedIndex - 1 : state.selectedIndex
-      return { ...state, profileImages: newProfileImages, selectedIndex: newSelectedIndex }
+      return { ...state, profileImages: newProfileImages }
     }
     case 'selectImage': {
-      const selectedImage = state.profileImages[action.payload]
-      const newProfileImages = state.profileImages.filter((image) => image.status !== 'error')
-      const newSelectedIndex = newProfileImages.indexOf(selectedImage)
+      const newProfileImages = state.profileImages.reduce<ProfileImageState[]>((acc, image) => {
+        return [
+          ...acc,
+          {
+            ...image,
+            selected: image.id === action.payload,
+          },
+        ]
+      }, [])
       return {
         ...state,
         profileImages: newProfileImages,
-        selectedIndex: newSelectedIndex,
-        activeIndex: undefined,
+        selectedId: action.payload,
+        activeId: undefined,
       }
     }
     case 'crop': {
-      const { index, crop, transformations } = action.payload
+      const { id, crop, transformations } = action.payload
       const newProfileImages = [...state.profileImages]
-      newProfileImages[index] = profileImageReducer(newProfileImages[index], {
+      const idx = newProfileImages.findIndex((image) => image.id === id)
+      newProfileImages[idx] = profileImageReducer(newProfileImages[idx], {
         type: 'crop',
         payload: { crop, transformations },
       })
@@ -232,7 +243,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
     case 'openCropImageModal':
       return {
         ...state,
-        activeIndex: action.payload.index,
+        activeId: action.payload.id,
         isUploadImagesModalOpen: false,
         isCropImageModalOpen: true,
         isCroppingPendingSelection: action.payload.isSelectionPending,
@@ -240,7 +251,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
     case 'closeCropImageModal':
       return {
         ...state,
-        activeIndex: undefined,
+        activeId: undefined,
         isCropImageModalOpen: false,
         isUploadImagesModalOpen: !state.isCroppingPendingSelection,
       }
@@ -262,6 +273,7 @@ export interface ProfileImageState {
   error?: string
   crop?: Crop
   transformations?: ImageTransformations
+  selected: boolean
 }
 
 type ProfileImageAction =

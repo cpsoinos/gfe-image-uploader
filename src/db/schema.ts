@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import { integer, sqliteTable, text, primaryKey, uniqueIndex } from 'drizzle-orm/sqlite-core'
 import { id, timestamps } from './utils/common'
 import type { WorkplaceInfo, LocationInfo, ImageTransformations } from '@/types'
@@ -110,10 +111,14 @@ export const profileImages = sqliteTable(
     format: text('format', { enum: ['image/jpeg', 'image/png'] }).notNull(),
     crop: text('crop', { mode: 'json' }).$type<Crop>(),
     transformations: text('transformations', { mode: 'json' }).$type<ImageTransformations>(),
+    selected: integer('selected', { mode: 'boolean' }).notNull().default(false),
   },
   (table) => {
     return {
       userIdNameIdx: uniqueIndex('userId_name_idx').on(table.userId, table.name),
+      selectedByUserIdx: uniqueIndex('selected_by_user_idx')
+        .on(table.userId, table.selected)
+        .where(sql`profileImage.selected = 1`),
     }
   },
 )

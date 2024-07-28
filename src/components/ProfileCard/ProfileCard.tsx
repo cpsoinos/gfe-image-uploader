@@ -3,6 +3,7 @@
 import './ProfileCard.styles.css'
 import Image from 'next/image'
 import { forwardRef, useMemo, useRef, type HTMLAttributes } from 'react'
+import { selectProfileImage } from '@/app/actions/selectProfileImage'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { useToasts } from '@/contexts/ToastsContext'
 import { buildTransformParams } from '@/lib/images/buildTransformParams'
@@ -30,25 +31,26 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
     const { addToast } = useToasts()
     const { state, dispatch } = useProfileImages()
 
-    const selectedImage = state.profileImages[state.selectedIndex]
+    const selectedImage = state.profileImages.find((image) => image.selected)
 
     const openUploadImagesModal = () => {
       uploadImagesModalRef.current?.showModal()
       dispatch({ type: 'openUploadImagesModal' })
     }
 
-    const openCropImageModal = (index: number, isCropOnSelect?: boolean) => {
+    const openCropImageModal = (id: string, isCropOnSelect?: boolean) => {
       dispatch({
         type: 'openCropImageModal',
-        payload: { index, isSelectionPending: isCropOnSelect },
+        payload: { id, isSelectionPending: isCropOnSelect },
       })
       uploadImagesModalRef.current?.close()
       cropImageModalRef.current?.showModal()
     }
 
-    const onCropImageModalClose = () => {
+    const onCropImageModalClose = async () => {
       if (state.isCroppingPendingSelection) {
-        dispatch({ type: 'selectImage', payload: state.activeIndex! })
+        await selectProfileImage(state.activeId!)
+        dispatch({ type: 'selectImage', payload: state.activeId! })
         addToast({ type: 'success', message: 'Changes saved successfully' })
         dispatch({ type: 'closeUploadImagesModal' })
       } else {

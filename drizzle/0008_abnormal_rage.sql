@@ -1,0 +1,2 @@
+ALTER TABLE `profileImage` ADD `selected` integer DEFAULT false NOT NULL;--> statement-breakpoint
+CREATE UNIQUE INDEX `selected_by_user_idx` ON `profileImage` (`userId`,`selected`) WHERE profileImage.selected = 1;
