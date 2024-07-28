@@ -12,7 +12,6 @@ export const users = sqliteTable(
     name: text('name').notNull(),
     email: text('email').notNull(),
     emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
-    hashedPassword: text('hashedPassword'),
     image: text('image'),
     handle: text('handle'),
     workplace: text('workplace', { mode: 'json' }).$type<WorkplaceInfo>(),
