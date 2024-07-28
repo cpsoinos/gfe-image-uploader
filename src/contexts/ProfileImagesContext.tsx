@@ -34,6 +34,7 @@ export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
 }) => {
   const profileImages = storedImages.map((image) => {
     const profileImageState: ProfileImageState = {
+      id: image.id,
       pathPrefix,
       status: 'uploaded',
       name: image.name,
