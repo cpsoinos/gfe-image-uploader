@@ -48,6 +48,8 @@ export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
   })
 
   const selectedId = profileImages.find((image) => image.selected)?.id
+  const error =
+    profileImages.length >= MAX_NUMBER_OF_FILES ? "You've reached the image limit" : undefined
 
   const [state, dispatch] = useReducer(profileImagesReducer, {
     pathPrefix,
@@ -55,6 +57,7 @@ export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
     selectedId,
     isUploadImagesModalOpen: false,
     isCropImageModalOpen: false,
+    error,
   })
 
   const value = useMemo(() => ({ state, dispatch }), [state])
@@ -203,7 +206,14 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
       const index = action.payload
       const newProfileImages = [...state.profileImages]
       newProfileImages.splice(index, 1)
-      return { ...state, profileImages: newProfileImages }
+      return {
+        ...state,
+        profileImages: newProfileImages,
+        error:
+          newProfileImages.length >= MAX_NUMBER_OF_FILES
+            ? "You've reached the image limit"
+            : undefined,
+      }
     }
     case 'selectImage': {
       const newProfileImages = state.profileImages.reduce<ProfileImageState[]>((acc, image) => {

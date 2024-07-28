@@ -144,7 +144,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
         <div className="flex flex-col gap-8">
           {profileImages.map((image, i) => (
             <ImageRow
-              key={image.name}
+              key={`${image.name}__${image.id}`}
               {...image}
               selected={Boolean(localSelectedId && localSelectedId === image.id)}
               onCancelUpload={() => handleCancelUpload(i)}
