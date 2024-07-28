@@ -12,6 +12,7 @@ const config: StorybookConfig = {
     name: '@storybook/nextjs',
     options: {},
   },
+  features: { experimentalRSC: true },
   staticDirs: ['../public'],
   webpackFinal: async (config) => {
     config.module = config.module || {}
