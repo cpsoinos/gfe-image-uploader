@@ -98,18 +98,26 @@ export const authenticators = sqliteTable(
   }),
 )
 
-export const profileImages = sqliteTable('profileImage', {
-  id,
-  ...timestamps,
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  name: text('name').notNull(),
-  size: integer('size', { mode: 'number' }).notNull(),
-  format: text('format', { enum: ['JPEG', 'PNG'] }).notNull(),
-  crop: text('crop', { mode: 'json' }).$type<Crop>(),
-  transformations: text('transformations', { mode: 'json' }).$type<ImageTransformations>(),
-})
+export const profileImages = sqliteTable(
+  'profileImage',
+  {
+    id,
+    ...timestamps,
+    userId: text('userId')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    size: integer('size', { mode: 'number' }).notNull(),
+    format: text('format', { enum: ['image/jpeg', 'image/png'] }).notNull(),
+    crop: text('crop', { mode: 'json' }).$type<Crop>(),
+    transformations: text('transformations', { mode: 'json' }).$type<ImageTransformations>(),
+  },
+  (table) => {
+    return {
+      userIdNameIdx: uniqueIndex('userId_name_idx').on(table.userId, table.name),
+    }
+  },
+)
 
 export type ProfileImage = typeof profileImages.$inferSelect // return type when queried
 export type InsertProfileImage = typeof profileImages.$inferInsert // insert type

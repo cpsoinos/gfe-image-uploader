@@ -40,7 +40,7 @@ export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
       size: image.size,
       src: `${R2_BASE_URL}/${pathPrefix}/${image.name}`,
     }
-    return profileImageReducer(profileImageState, { type: 'validate' })
+    return profileImageState
   })
 
   const [state, dispatch] = useReducer(profileImagesReducer, {

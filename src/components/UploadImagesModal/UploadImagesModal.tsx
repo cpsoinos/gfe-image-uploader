@@ -2,6 +2,7 @@
 
 import mergeRefs from 'merge-refs'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
+import { createProfileImage } from '@/app/actions/createProfileImage'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { getPresignedUploadUrl } from '@/lib/getPresignedUploadUrl'
 import { Button } from '../Button/Button'
@@ -69,7 +70,7 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
           }
         }
 
-        xhr.onload = () => {
+        xhr.onload = async () => {
           if (xhr.status === 200) {
             dispatch({ type: 'uploadSuccess', payload: { index } })
             setTimeout(() => {
@@ -84,6 +85,14 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
                   'An unexpected error occurred during the upload. Please contact support if the issue persists.',
               },
             })
+          }
+        }
+
+        // Create a profileImage record in the database after the upload is complete
+        xhr.upload.onloadend = async () => {
+          if (xhr.status === 200) {
+            const format = file.type as 'image/jpeg' | 'image/png'
+            await createProfileImage({ name: file.name, size: file.size, format })
           }
         }
 
