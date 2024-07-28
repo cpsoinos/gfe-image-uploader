@@ -14,7 +14,7 @@ export default function Error({ error }: { error: Error & { digest?: string } })
       <ErrorView
         title="Unexpected error"
         description="We're facing some issues at the moment. Please try again later or contact support at"
-        link={{ href: '/', text: 'info@anderapps.com' }}
+        link={{ href: 'mailto:info@anderapps.com', text: 'info@anderapps.com' }}
       />
     </div>
   )
