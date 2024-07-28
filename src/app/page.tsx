@@ -2,6 +2,7 @@ import { getRequestContext } from '@cloudflare/next-on-pages'
 import { drizzle } from 'drizzle-orm/d1'
 import { auth } from '@/auth'
 import { ProfileCard } from '@/components/ProfileCard/ProfileCard'
+import { SignOut } from '@/components/SignOut/SignOut'
 import { ToastsContainer } from '@/components/Toast/ToastsContainer'
 import { ProfileImagesProvider } from '@/contexts/ProfileImagesContext'
 import { ToastsProvider } from '@/contexts/ToastsContext'
@@ -34,7 +35,8 @@ export default async function Home() {
   })
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="relative flex min-h-screen flex-col items-center justify-between p-24">
+      {session?.user.id && <SignOut />}
       <ToastsProvider>
         <ProfileImagesProvider pathPrefix={session!.user.id} storedImages={profileImages}>
           <ToastsContainer />

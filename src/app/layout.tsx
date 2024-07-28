@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: 'A challenge by GreatFrontEnd Projects. Built by Corey Psoinos.',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode
