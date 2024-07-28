@@ -15,7 +15,6 @@ import { Radio } from '../Radio/Radio'
 import type { ProfileImageState } from '@/contexts/ProfileImagesContext'
 
 export interface ImageRowProps extends ProfileImageState {
-  selected?: boolean
   onCancelUpload: () => void
   onSelect: () => void
   onDelete: () => void
@@ -23,6 +22,7 @@ export interface ImageRowProps extends ProfileImageState {
 }
 
 export const ImageRow: FC<ImageRowProps> = ({
+  id,
   name,
   size,
   file,
@@ -82,7 +82,7 @@ export const ImageRow: FC<ImageRowProps> = ({
           <div className="flex">
             <p className="grow font-semibold">{name}</p>
             {status === 'uploaded' ? (
-              <Radio checked={selected} name="selectedImage" onChange={onRadioChanged} />
+              <Radio value={id} checked={selected} name="selectedImage" onChange={onRadioChanged} />
             ) : (
               <Button variant="icon" className="size-5" onClick={onCancelUpload}>
                 <CloseIcon className="size-4 text-neutral-600" />

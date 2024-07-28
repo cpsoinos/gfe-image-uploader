@@ -26,11 +26,12 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
     }
 
     const { state, dispatch } = useProfileImages()
-    const { activeIndex } = state
-    const src = activeIndex !== undefined ? state.profileImages[activeIndex].src : undefined
+    const { activeId } = state
+    const activeImage = state.profileImages.find((img) => img.id === activeId)
+    const src = activeImage?.src
 
     const onSave = useCallback(() => {
-      if (!crop || !originalImageDimensions || activeIndex === undefined) {
+      if (!crop || !originalImageDimensions || activeId === undefined) {
         return
       }
       const transformations: ImageTransformations = {
@@ -39,8 +40,8 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
         width: (crop.width * originalImageDimensions.width) / 100,
         height: (crop.height * originalImageDimensions.height) / 100,
       }
-      dispatch({ type: 'crop', payload: { index: activeIndex, crop, transformations } })
-    }, [activeIndex, crop, dispatch, originalImageDimensions])
+      dispatch({ type: 'crop', payload: { id: activeId, crop, transformations } })
+    }, [activeId, crop, dispatch, originalImageDimensions])
 
     return (
       <Modal

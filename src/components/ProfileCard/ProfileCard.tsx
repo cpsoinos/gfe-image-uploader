@@ -30,17 +30,17 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
     const { addToast } = useToasts()
     const { state, dispatch } = useProfileImages()
 
-    const selectedImage = state.profileImages[state.selectedIndex]
+    const selectedImage = state.profileImages.find((image) => image.selected)
 
     const openUploadImagesModal = () => {
       uploadImagesModalRef.current?.showModal()
       dispatch({ type: 'openUploadImagesModal' })
     }
 
-    const openCropImageModal = (index: number, isCropOnSelect?: boolean) => {
+    const openCropImageModal = (id: string, isCropOnSelect?: boolean) => {
       dispatch({
         type: 'openCropImageModal',
-        payload: { index, isSelectionPending: isCropOnSelect },
+        payload: { id, isSelectionPending: isCropOnSelect },
       })
       uploadImagesModalRef.current?.close()
       cropImageModalRef.current?.showModal()
@@ -48,7 +48,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
 
     const onCropImageModalClose = () => {
       if (state.isCroppingPendingSelection) {
-        dispatch({ type: 'selectImage', payload: state.activeIndex! })
+        dispatch({ type: 'selectImage', payload: state.activeId! })
         addToast({ type: 'success', message: 'Changes saved successfully' })
         dispatch({ type: 'closeUploadImagesModal' })
       } else {
