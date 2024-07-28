@@ -3,6 +3,7 @@
 import mergeRefs from 'merge-refs'
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { createProfileImage } from '@/app/actions/createProfileImage'
+import { deleteProfileImage } from '@/app/actions/deleteProfileImage'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { getPresignedUploadUrl } from '@/lib/getPresignedUploadUrl'
 import { Button } from '../Button/Button'
@@ -37,9 +38,8 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
 
     const handleDelete = async (index: number) => {
       const key = profileImages[index].name
-      await fetch(`/api/images/${key}`, {
-        method: 'DELETE',
-      })
+      const id = profileImages[index].id
+      if (id) await deleteProfileImage(id)
       if (localSelectedIndex === index) {
         setLocalSelectedIndex((prev) => prev - 1)
       }
@@ -76,6 +76,15 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
             setTimeout(() => {
               dispatch({ type: 'uploadComplete', payload: { index } })
             }, SUCCESS_MESSAGE_TIMEOUT)
+            const format = file.type as 'image/jpeg' | 'image/png'
+            const [result] = await createProfileImage({
+              name: file.name,
+              size: file.size,
+              format,
+            })
+            if (result?.insertedId) {
+              dispatch({ type: 'setId', payload: { index, id: result.insertedId } })
+            }
           } else {
             dispatch({
               type: 'uploadError',
@@ -85,14 +94,6 @@ export const UploadImagesModal = forwardRef<HTMLDialogElement, UploadImagesModal
                   'An unexpected error occurred during the upload. Please contact support if the issue persists.',
               },
             })
-          }
-        }
-
-        // Create a profileImage record in the database after the upload is complete
-        xhr.upload.onloadend = async () => {
-          if (xhr.status === 200) {
-            const format = file.type as 'image/jpeg' | 'image/png'
-            await createProfileImage({ name: file.name, size: file.size, format })
           }
         }
 

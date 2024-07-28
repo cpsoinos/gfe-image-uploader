@@ -47,19 +47,3 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
 
   return new Response(signedUrl, { status: 200 })
 }
-
-/**
- * Delete an object from the R2 bucket
- *
- * @note
- * When running locally, this will not delete the object from the remote R2 bucket.
- * Instead, it will attempt to delete the object from the local R2 bucket storage emulator created by wrangler.
- */
-export async function DELETE(_request: NextRequest, context: { params: Params }) {
-  const { env } = getRequestContext()
-  const R2 = env.R2_BUCKET
-  const key = context.params.key
-  await R2.delete(key)
-
-  return new Response(null, { status: 204 })
-}

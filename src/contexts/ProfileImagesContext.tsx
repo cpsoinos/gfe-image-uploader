@@ -93,6 +93,7 @@ type ProfileImagesAction =
   | { type: 'uploadError'; payload: { index: number; error: string } }
   | { type: 'uploadSuccess'; payload: { index: number } }
   | { type: 'uploadComplete'; payload: { index: number } }
+  | { type: 'setId'; payload: { index: number; id: string } }
   | { type: 'removeFile'; payload: number }
   | { type: 'selectImage'; payload: number }
   | { type: 'crop'; payload: { index: number; crop: Crop; transformations: ImageTransformations } }
@@ -180,6 +181,17 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
       )
       return { ...state, profileImages: newProfileImages }
     }
+    case 'setId': {
+      const newProfileImages = [...state.profileImages]
+      newProfileImages[action.payload.index] = profileImageReducer(
+        newProfileImages[action.payload.index],
+        {
+          type: 'setId',
+          payload: action.payload.id,
+        },
+      )
+      return { ...state, profileImages: newProfileImages }
+    }
     case 'removeFile': {
       const index = action.payload
       const newProfileImages = [...state.profileImages]
@@ -237,6 +249,7 @@ export const profileImagesReducer: Reducer<ProfileImagesState, ProfileImagesActi
 }
 
 export interface ProfileImageState {
+  id?: string
   pathPrefix: string
   status: 'pending' | 'uploading' | 'uploadComplete' | 'uploaded' | 'error'
   xhr?: XMLHttpRequest
@@ -257,6 +270,7 @@ type ProfileImageAction =
   | { type: 'uploadError'; payload: string }
   | { type: 'uploadSuccess' }
   | { type: 'uploadComplete' }
+  | { type: 'setId'; payload: string }
   | { type: 'error'; payload: string }
   | { type: 'crop'; payload: { crop: Crop; transformations: ImageTransformations } }
 
@@ -301,6 +315,8 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
         ...state,
         status: 'uploaded',
       }
+    case 'setId':
+      return { ...state, id: action.payload }
     case 'error':
       return { ...state, status: 'error', error: action.payload }
     case 'crop':

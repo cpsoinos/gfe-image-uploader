@@ -11,10 +11,13 @@ export async function createProfileImage(
   const session = await auth()
   const { env } = getRequestContext()
   const db = drizzle(env.DB)
-  console.log({ image })
 
-  return await db.insert(profileImages).values({
-    userId: session!.user.id,
-    ...image,
-  })
+  return await db
+    .insert(profileImages)
+    .values({
+      userId: session!.user.id,
+      ...image,
+    })
+    .returning({ insertedId: profileImages.id })
+    .onConflictDoNothing()
 }
