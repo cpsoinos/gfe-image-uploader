@@ -50,11 +50,12 @@ export const Default: Story = {
 
     useEffect(() => {
       dispatch({ type: 'addFile', payload: new File([''], 'avatar.jpg', { type: 'image/jpeg' }) })
+      dispatch({ type: 'setId', payload: { index: 0, id: 'abc123' } })
       dispatch({
         type: 'uploadComplete',
         payload: { index: 0 },
       })
-      dispatch({ type: 'selectImage', payload: 0 })
+      dispatch({ type: 'selectImage', payload: 'abc123' })
     }, [dispatch])
 
     return <ProfileCard {...args} />

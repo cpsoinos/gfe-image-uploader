@@ -23,7 +23,7 @@ export const Default: Story = {
     const ref = useRef<HTMLDialogElement>(null)
 
     const openModal = useCallback(() => {
-      dispatch({ type: 'openCropImageModal', payload: { index: 0 } })
+      dispatch({ type: 'openCropImageModal', payload: { id: 'abc123' } })
       ref.current?.showModal()
     }, [dispatch])
 
@@ -34,6 +34,7 @@ export const Default: Story = {
         type: 'uploadSuccess',
         payload: { index: 0 },
       })
+      dispatch({ type: 'setId', payload: { index: 0, id: 'abc123' } })
       dispatch({ type: 'uploadComplete', payload: { index: 0 } })
     }, [dispatch, openModal])
 
