@@ -2,6 +2,7 @@ import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { drizzle } from 'drizzle-orm/d1'
 import NextAuth, { type DefaultSession } from 'next-auth'
+import Auth0 from 'next-auth/providers/auth0'
 import GitHub from 'next-auth/providers/github'
 import * as schema from './db/schema'
 
@@ -13,7 +14,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth(() => {
 
   return {
     adapter,
-    providers: [GitHub],
+    providers: [
+      GitHub,
+      Auth0({
+        issuer: 'https://gfe-image-uploader.us.auth0.com',
+      }),
+    ],
     callbacks: {
       async authorized({ auth }) {
         // Logged in users are authenticated, otherwise redirect to login page
