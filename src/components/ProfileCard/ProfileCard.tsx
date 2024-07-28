@@ -3,6 +3,7 @@
 import './ProfileCard.styles.css'
 import Image from 'next/image'
 import { forwardRef, useMemo, useRef, type HTMLAttributes } from 'react'
+import { selectProfileImage } from '@/app/actions/selectProfileImage'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { useToasts } from '@/contexts/ToastsContext'
 import { buildTransformParams } from '@/lib/images/buildTransformParams'
@@ -46,8 +47,9 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
       cropImageModalRef.current?.showModal()
     }
 
-    const onCropImageModalClose = () => {
+    const onCropImageModalClose = async () => {
       if (state.isCroppingPendingSelection) {
+        await selectProfileImage(state.activeId!)
         dispatch({ type: 'selectImage', payload: state.activeId! })
         addToast({ type: 'success', message: 'Changes saved successfully' })
         dispatch({ type: 'closeUploadImagesModal' })

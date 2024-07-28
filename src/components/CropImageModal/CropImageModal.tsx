@@ -1,7 +1,8 @@
 'use client'
 
 import mergeRefs from 'merge-refs'
-import { forwardRef, useCallback, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
+import { updateProfileImage } from '@/app/actions/updateProfileImage'
 import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { Button } from '../Button/Button'
 import { ImageCropper } from '../ImageCropper/ImageCropper'
@@ -19,18 +20,22 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
     const [originalImageDimensions, setOriginalImageDimensions] = useState<
       { width: number; height: number } | undefined
     >()
-    const [crop, setCrop] = useState<Crop | undefined>()
+    const { state, dispatch } = useProfileImages()
+    const { activeId } = state
+    const activeImage = state.profileImages.find((img) => img.id === activeId)
+    const [crop, setCrop] = useState<Crop | undefined>(activeImage?.crop)
+    const src = activeImage?.src
+
+    // sync crop with activeImage.crop
+    useEffect(() => {
+      setCrop(activeImage?.crop)
+    }, [activeImage])
 
     const onCropChange = (_crop: PixelCrop, percentCrop: PercentCrop) => {
       setCrop(percentCrop)
     }
 
-    const { state, dispatch } = useProfileImages()
-    const { activeId } = state
-    const activeImage = state.profileImages.find((img) => img.id === activeId)
-    const src = activeImage?.src
-
-    const onSave = useCallback(() => {
+    const onSave = useCallback(async () => {
       if (!crop || !originalImageDimensions || activeId === undefined) {
         return
       }
@@ -40,6 +45,7 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
         width: (crop.width * originalImageDimensions.width) / 100,
         height: (crop.height * originalImageDimensions.height) / 100,
       }
+      await updateProfileImage({ id: activeId, crop, transformations })
       dispatch({ type: 'crop', payload: { id: activeId, crop, transformations } })
     }, [activeId, crop, dispatch, originalImageDimensions])
 

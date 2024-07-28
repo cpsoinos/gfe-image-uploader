@@ -33,23 +33,24 @@ export const ImageCropper: FC<ImageCropperProps> = ({
     const { naturalWidth: width, naturalHeight: height } = e.currentTarget
     setOriginalImageDimensions({ width, height })
 
-    const crop = centerCrop(
-      makeAspectCrop(
-        {
-          // You don't need to pass a complete crop into
-          // makeAspectCrop or centerCrop.
-          unit: '%',
-          width: 90,
-        },
-        aspectRatio,
+    if (!crop) {
+      const initialCrop = centerCrop(
+        makeAspectCrop(
+          {
+            // You don't need to pass a complete crop into
+            // makeAspectCrop or centerCrop.
+            unit: '%',
+            width: 90,
+          },
+          aspectRatio,
+          width,
+          height,
+        ),
         width,
         height,
-      ),
-      width,
-      height,
-    )
-
-    setCrop(crop)
+      )
+      setCrop(initialCrop)
+    }
   }
 
   return (

@@ -41,6 +41,8 @@ export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
       size: image.size,
       src: `${R2_BASE_URL}/${pathPrefix}/${image.name}`,
       selected: image.selected,
+      crop: image.crop ?? undefined,
+      transformations: image.transformations ?? undefined,
     }
     return profileImageState
   })
