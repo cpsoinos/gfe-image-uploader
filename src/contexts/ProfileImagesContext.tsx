@@ -29,7 +29,7 @@ export type ProfileImagesProviderProps = PropsWithChildren<{
 
 export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
   pathPrefix,
-  storedImages,
+  storedImages = [],
   children,
 }) => {
   const profileImages = storedImages.map((image) => {
