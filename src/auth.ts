@@ -5,6 +5,14 @@ import NextAuth, { type DefaultSession } from 'next-auth'
 import Auth0 from 'next-auth/providers/auth0'
 import GitHub from 'next-auth/providers/github'
 import * as schema from './db/schema'
+import type { Provider } from 'next-auth/providers'
+
+const providers: Provider[] = [
+  GitHub,
+  Auth0({
+    issuer: 'https://gfe-image-uploader.us.auth0.com',
+  }),
+]
 
 export const { handlers, signIn, signOut, auth } = NextAuth(() => {
   const { env } = getRequestContext()
@@ -14,12 +22,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth(() => {
 
   return {
     adapter,
-    providers: [
-      GitHub,
-      Auth0({
-        issuer: 'https://gfe-image-uploader.us.auth0.com',
-      }),
-    ],
+    providers,
+    pages: {
+      signIn: '/signin',
+    },
     callbacks: {
       async authorized({ auth }) {
         // Logged in users are authenticated, otherwise redirect to login page
@@ -34,6 +40,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth(() => {
         return session
       },
     },
+  }
+})
+
+export const providerMap = providers.map((provider) => {
+  if (typeof provider === 'function') {
+    const providerData = provider()
+    return { id: providerData.id, name: providerData.name }
+  } else {
+    return { id: provider.id, name: provider.name }
   }
 })
 
