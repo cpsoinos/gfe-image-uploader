@@ -13,6 +13,6 @@
 }
 
 body {
-  @apply min-h-screen text-neutral-900;
+  @apply text-neutral-900;
   background: linear-gradient(148deg, #f9fafb 8.89%, #d2d6db 100.48%);
 }

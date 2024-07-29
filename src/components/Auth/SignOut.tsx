@@ -4,7 +4,7 @@ import { Button } from '../Button/Button'
 export const SignOut = () => {
   return (
     <form
-      className="absolute right-0 top-0 p-2 md:p-4"
+      className="fixed right-0 top-0 p-2 md:p-4"
       action={async () => {
         'use server'
         await signOut()

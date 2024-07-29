@@ -32,7 +32,7 @@ export default async function RootLayout({
   const user = session?.user
 
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-dvh">
       <PHProvider>
         <body className={twJoin('h-full', notoSans.className)}>
           <PostHogIdentify user={user} />
