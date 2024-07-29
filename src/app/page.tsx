@@ -35,7 +35,7 @@ export default async function Home() {
   })
 
   return (
-    <main className="flex min-h-full flex-col items-center justify-center p-24">
+    <main className="flex min-h-full flex-col items-center justify-center">
       {session?.user.id && <SignOut />}
       <ToastsProvider>
         <ProfileImagesProvider pathPrefix={session!.user.id} storedImages={profileImages}>
