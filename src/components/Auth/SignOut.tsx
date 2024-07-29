@@ -11,7 +11,7 @@ export const SignOut = () => {
       }}
     >
       <Button variant="secondary" className="self-end" type="submit">
-        Sign Out
+        Sign out
       </Button>
     </form>
   )
