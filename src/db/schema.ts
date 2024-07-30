@@ -5,7 +5,7 @@ import type { ImageTransformations } from '@/types'
 import type { Crop } from 'react-image-crop'
 
 export const profileImages = sqliteTable(
-  'profileImage',
+  'profile_images',
   {
     id: text('id')
       .primaryKey()
@@ -19,7 +19,7 @@ export const profileImages = sqliteTable(
       .default(sql`(CURRENT_TIMESTAMP)`)
       .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
       .$type<Date>(),
-    userId: text('userId').notNull(),
+    userId: text('user_id').notNull(),
     name: text('name').notNull(),
     size: integer('size', { mode: 'number' }).notNull(),
     format: text('format', { enum: ['image/jpeg', 'image/png'] }).notNull(),
@@ -32,7 +32,7 @@ export const profileImages = sqliteTable(
       userIdNameIdx: uniqueIndex('userId_name_idx').on(table.userId, table.name),
       selectedByUserIdx: uniqueIndex('selected_by_user_idx')
         .on(table.userId, table.selected)
-        .where(sql`profileImage.selected = 1`),
+        .where(sql`profile_images.selected = 1`),
     }
   },
 )
