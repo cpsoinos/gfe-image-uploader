@@ -3,16 +3,13 @@
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { and, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
-import { auth } from '@/auth'
 import { profileImages, type ProfileImage } from '@/db/schema'
+import { getUserId } from '@/lib/getUserId'
 
 export async function updateProfileImage(
   image: Pick<ProfileImage, 'id' | 'crop' | 'transformations'>,
 ) {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('Unauthorized')
-  }
+  const userId = getUserId()
 
   const { env } = getRequestContext()
   const db = drizzle(env.DB)
@@ -23,6 +20,6 @@ export async function updateProfileImage(
       crop: image.crop,
       transformations: image.transformations,
     })
-    .where(and(eq(profileImages.userId, session.user.id), eq(profileImages.id, image.id)))
+    .where(and(eq(profileImages.userId, userId), eq(profileImages.id, image.id)))
     .returning()
 }
