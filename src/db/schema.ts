@@ -103,9 +103,7 @@ export const profileImages = sqliteTable(
   {
     id,
     ...timestamps,
-    userId: text('userId')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
+    userId: text('userId').notNull(),
     name: text('name').notNull(),
     size: integer('size', { mode: 'number' }).notNull(),
     format: text('format', { enum: ['image/jpeg', 'image/png'] }).notNull(),

@@ -64,6 +64,13 @@
       "when": 1722181566308,
       "tag": "0008_abnormal_rage",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1722371296406,
+      "tag": "0009_unusual_wasp",
+      "breakpoints": true
     }
   ]
 }
