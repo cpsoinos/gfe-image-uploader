@@ -1,5 +1,6 @@
 'use client'
 
+import { usePostHog } from 'posthog-js/react'
 import {
   createContext,
   useContext,
@@ -32,6 +33,9 @@ export const ProfileImagesProvider: FC<ProfileImagesProviderProps> = ({
   storedImages = [],
   children,
 }) => {
+  const posthog = usePostHog()
+  pathPrefix ||= posthog.get_distinct_id()
+
   const profileImages = storedImages.map((image) => {
     const profileImageState: ProfileImageState = {
       id: image.id,

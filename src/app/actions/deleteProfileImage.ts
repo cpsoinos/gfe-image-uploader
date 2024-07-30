@@ -4,26 +4,22 @@ import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { and, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/d1'
-import { auth } from '@/auth'
 import { profileImages } from '@/db/schema'
 import * as schema from '@/db/schema'
+import { getUserId } from '@/lib/getUserId'
 
 /**
  * Delete a profileImage record from D1 db,
  * and delete the corresponding object from the R2 bucket
  */
 export async function deleteProfileImage(id: string) {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('Unauthorized')
-  }
-
+  const userId = getUserId()
   const { env } = getRequestContext()
   const db = drizzle(env.DB, { schema })
 
   const profileImage = await db.query.profileImages.findFirst({
     where: (profileImages, { and, eq }) =>
-      and(eq(profileImages.id, id), eq(profileImages.userId, session.user.id)),
+      and(eq(profileImages.id, id), eq(profileImages.userId, userId)),
   })
   if (!profileImage) {
     throw new Error('Profile image not found')
@@ -32,9 +28,7 @@ export async function deleteProfileImage(id: string) {
   const promises = []
 
   promises.push(
-    db
-      .delete(profileImages)
-      .where(and(eq(profileImages.id, id), eq(profileImages.userId, session.user.id))),
+    db.delete(profileImages).where(and(eq(profileImages.id, id), eq(profileImages.userId, userId))),
   )
 
   const key = `${profileImage.userId}/${profileImage.name}`

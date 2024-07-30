@@ -1,111 +1,25 @@
+import { createId } from '@paralleldrive/cuid2'
 import { sql } from 'drizzle-orm'
-import { integer, sqliteTable, text, primaryKey, uniqueIndex } from 'drizzle-orm/sqlite-core'
-import { id, timestamps } from './utils/common'
-import type { WorkplaceInfo, LocationInfo, ImageTransformations } from '@/types'
-import type { AdapterAccountType } from 'next-auth/adapters'
+import { integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import type { ImageTransformations } from '@/types'
 import type { Crop } from 'react-image-crop'
 
-export const users = sqliteTable(
-  'user',
-  {
-    id,
-    ...timestamps,
-    name: text('name').notNull(),
-    email: text('email').notNull(),
-    emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
-    image: text('image'),
-    handle: text('handle'),
-    workplace: text('workplace', { mode: 'json' }).$type<WorkplaceInfo>(),
-    location: text('location', { mode: 'json' }).$type<LocationInfo>(),
-    pronouns: text('pronouns'),
-  },
-  (table) => {
-    return {
-      emailIdx: uniqueIndex('email_idx').on(table.email),
-    }
-  },
-)
-
-export type User = typeof users.$inferSelect // return type when queried
-export type InsertUser = typeof users.$inferInsert // insert type
-
-export const accounts = sqliteTable(
-  'account',
-  {
-    userId: text('userId')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    type: text('type').$type<AdapterAccountType>().notNull(),
-    provider: text('provider').notNull(),
-    providerAccountId: text('providerAccountId').notNull(),
-    refresh_token: text('refresh_token'),
-    access_token: text('access_token'),
-    expires_at: integer('expires_at'),
-    token_type: text('token_type'),
-    scope: text('scope'),
-    id_token: text('id_token'),
-    session_state: text('session_state'),
-  },
-  (account) => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
-  }),
-)
-
-export const sessions = sqliteTable('session', {
-  sessionToken: text('sessionToken').primaryKey(),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
-})
-
-export const verificationTokens = sqliteTable(
-  'verificationToken',
-  {
-    identifier: text('identifier').notNull(),
-    token: text('token').notNull(),
-    expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
-  },
-  (verificationToken) => ({
-    compositePk: primaryKey({
-      columns: [verificationToken.identifier, verificationToken.token],
-    }),
-  }),
-)
-
-export const authenticators = sqliteTable(
-  'authenticator',
-  {
-    credentialID: text('credentialID').notNull().unique(),
-    userId: text('userId')
-      .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
-    providerAccountId: text('providerAccountId').notNull(),
-    credentialPublicKey: text('credentialPublicKey').notNull(),
-    counter: integer('counter').notNull(),
-    credentialDeviceType: text('credentialDeviceType').notNull(),
-    credentialBackedUp: integer('credentialBackedUp', {
-      mode: 'boolean',
-    }).notNull(),
-    transports: text('transports'),
-  },
-  (authenticator) => ({
-    compositePK: primaryKey({
-      columns: [authenticator.userId, authenticator.credentialID],
-    }),
-  }),
-)
-
 export const profileImages = sqliteTable(
-  'profileImage',
+  'profile_images',
   {
-    id,
-    ...timestamps,
-    userId: text('userId')
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    createdAt: text('created_at')
       .notNull()
-      .references(() => users.id, { onDelete: 'cascade' }),
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .$type<Date>(),
+    updatedAt: text('updated_at')
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+      .$type<Date>(),
+    userId: text('user_id').notNull(),
     name: text('name').notNull(),
     size: integer('size', { mode: 'number' }).notNull(),
     format: text('format', { enum: ['image/jpeg', 'image/png'] }).notNull(),
@@ -118,7 +32,7 @@ export const profileImages = sqliteTable(
       userIdNameIdx: uniqueIndex('userId_name_idx').on(table.userId, table.name),
       selectedByUserIdx: uniqueIndex('selected_by_user_idx')
         .on(table.userId, table.selected)
-        .where(sql`profileImage.selected = 1`),
+        .where(sql`profile_images.selected = 1`),
     }
   },
 )

@@ -1,7 +1,7 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { getRequestContext } from '@cloudflare/next-on-pages'
-import { auth } from '@/auth'
+import { getUserId } from '@/lib/getUserId'
 import type { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
@@ -14,8 +14,7 @@ type Params = {
  * Get a signed URL for uploading an object to the R2 bucket
  */
 export async function PUT(request: NextRequest, context: { params: Params }) {
-  const session = await auth()
-  if (!session?.user) return new Response(null, { status: 401 })
+  const userId = getUserId()
 
   const { env } = getRequestContext()
   const searchParams = request.nextUrl.searchParams
@@ -37,7 +36,7 @@ export async function PUT(request: NextRequest, context: { params: Params }) {
     R2,
     new PutObjectCommand({
       Bucket: env.R2_BUCKET_NAME,
-      Key: `${session?.user.id}/${context.params.key}`,
+      Key: `${userId}/${context.params.key}`,
       ContentType: contentType,
     }),
     {
