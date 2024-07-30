@@ -71,6 +71,13 @@
       "when": 1722371296406,
       "tag": "0009_unusual_wasp",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1722371538615,
+      "tag": "0010_skinny_moira_mactaggert",
+      "breakpoints": true
     }
   ]
 }
