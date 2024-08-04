@@ -3,8 +3,6 @@ import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    loader: 'custom',
-    loaderFile: './src/lib/images/cloudflareImageLoader.ts',
     remotePatterns: [
       {
         protocol: 'https',
