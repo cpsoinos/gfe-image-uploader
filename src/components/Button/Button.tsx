@@ -27,7 +27,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
         className={twMerge(
-          'focus:focus-band flex items-center justify-center gap-1.5 rounded px-3 py-2 text-sm disabled:bg-neutral-100 disabled:text-neutral-400 md:px-4 md:py-2.5 md:text-base',
+          'focus-visible:focus-band flex items-center justify-center gap-1.5 rounded px-3 py-2 text-sm focus-visible:outline-transparent disabled:bg-neutral-100 disabled:text-neutral-400 md:px-4 md:py-2.5 md:text-base',
           variantClasses[variant],
           size && sizeClasses[size],
           props.className,
