@@ -58,7 +58,7 @@ export const CropImageModal = forwardRef<HTMLDialogElement, CropImageModalProps>
       >
         {src && (
           <form className="flex flex-col gap-8" method="dialog">
-            <div className="flex h-[18.125rem] w-[18.4375rem] justify-center bg-neutral-950">
+            <div className="flex h-[18.125rem] w-[18.4375rem] items-center justify-center bg-neutral-950">
               <ImageCropper
                 src={src}
                 aspectRatio={1}
