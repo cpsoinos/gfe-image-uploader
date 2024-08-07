@@ -8,6 +8,7 @@ import { useProfileImages } from '@/contexts/ProfileImagesContext'
 import { useToasts } from '@/contexts/ToastsContext'
 import { buildTransformParams } from '@/lib/images/buildTransformParams'
 import { cloudflareLoaderWithTransformations } from '@/lib/images/cloudflareImageLoader'
+import { R2_BASE_URL } from '@/lib/images/constants'
 import { Button } from '../Button/Button'
 import { CropImageModal } from '../CropImageModal/CropImageModal'
 import { UploadImagesModal } from '../UploadImagesModal/UploadImagesModal'
@@ -15,6 +16,8 @@ import { Location } from './Location'
 import { ProfileDetails } from './ProfileDetails'
 import { Workplace } from './Workplace'
 import type { LocationInfo, WorkplaceInfo } from '@/types'
+
+const EMPTY_AVATAR_SRC = `${R2_BASE_URL}/avatar-empty.svg`
 
 export interface ProfileCardProps extends HTMLAttributes<HTMLDivElement> {
   name: string
@@ -74,7 +77,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
 
           <div className="z-10 flex items-end justify-between">
             <Image
-              src={selectedImage?.src || '/avatar-empty.svg'}
+              src={selectedImage?.src || EMPTY_AVATAR_SRC}
               loader={
                 selectedImage?.transformations &&
                 cloudflareLoaderWithTransformations(transformationsString)

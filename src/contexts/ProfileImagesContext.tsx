@@ -334,7 +334,7 @@ export const profileImageReducer: Reducer<ProfileImageState, ProfileImageAction>
         ...state,
         status: 'uploadComplete',
         progress: 100,
-        src: `${R2_BASE_URL}/${state.name}`,
+        src: `${R2_BASE_URL}/${state.pathPrefix}/${state.name}`,
         xhr: undefined,
       }
     case 'uploadComplete':
