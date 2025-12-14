@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
-    "@cloudflare/next-on-pages": "^1.13.1",
+    "@cloudflare/next-on-pages": "^1.13.16",
     "@cloudflare/workers-types": "^4.20240725.0",
     "@cpsoinos/prettier-config": "^1.0.0",
     "@storybook/addon-essentials": "^8.2.8",
