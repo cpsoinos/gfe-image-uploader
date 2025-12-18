@@ -71,7 +71,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "sort-package-json": "^2.10.0",
-    "storybook": "^8.2.8",
+    "storybook": "^8.6.15",
     "tailwindcss": "^3.4.7",
     "typescript": "^5.5.4",
     "wrangler": "^3.69.1"
